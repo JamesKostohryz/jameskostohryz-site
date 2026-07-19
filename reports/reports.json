@@ -1,0 +1,53 @@
+{
+  "generated": "2026-07-19T16:37:21Z",
+  "count": 3,
+  "types": [
+    {
+      "key": "daily",
+      "label": "Daily Market Brief"
+    },
+    {
+      "key": "weekly",
+      "label": "Weekly Report"
+    },
+    {
+      "key": "geo",
+      "label": "Geopolitical Brief"
+    }
+  ],
+  "reports": [
+    {
+      "file": "geo_2026-07-19-am.html",
+      "type_key": "geo",
+      "type_label": "Geopolitical Brief",
+      "css": "geo",
+      "date": "2026-07-19",
+      "variant": "am",
+      "display_date": "July 19, 2026 · AM",
+      "title": "Iran · Israel · US Desk — Morning Brief",
+      "summary": "The weekend crossed two lines flagged as the real tail triggers: the first US combat deaths from Iranian fire since March, and the energy-restraint keystone breaking on both sides."
+    },
+    {
+      "file": "daily_2026-07-19.html",
+      "type_key": "daily",
+      "type_label": "Daily Market Brief",
+      "css": "daily",
+      "date": "2026-07-19",
+      "variant": "",
+      "display_date": "July 19, 2026",
+      "title": "Daily Market Brief",
+      "summary": "Two-layer market: a structurally bearish supply base overlaid with a re-inflating geopolitical risk premium. Price is held up by the premium, not the fundamentals."
+    },
+    {
+      "file": "weekly_2026-07-19.html",
+      "type_key": "weekly",
+      "type_label": "Weekly Report",
+      "css": "weekly",
+      "date": "2026-07-19",
+      "variant": "",
+      "display_date": "July 19, 2026",
+      "title": "Weekly Report — Oil & Gas Desk",
+      "summary": "This week's distillate build and modest crude draw are consistent with the floating-storage glut still washing through — not an accelerating global deficit. The ~5 mb/d clock is a post-July risk."
+    }
+  ]
+}

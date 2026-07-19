@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="report:title" content="Weekly Report — Oil & Gas Desk">
+<meta name="report:summary" content="This week's distillate build and modest crude draw are consistent with the floating-storage glut still washing through — not an accelerating global deficit. The ~5 mb/d clock is a post-July risk.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oil &amp; Gas Desk — Weekly Report</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body { margin:0; background:#e9ebee; color:#16202b; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; line-height:1.5; }
+.wrap { max-width:960px; margin:0 auto; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.09); }
+.pad { padding:20px 28px 56px; }
+header.jk { background:#123a5e; color:#fff; padding:18px 28px; }
+.brandrow { display:flex; align-items:center; justify-content:space-between; }
+.brand { display:flex; align-items:center; gap:11px; }
+.wordmark { font-size:13px; letter-spacing:.16em; font-weight:600; opacity:.92; }
+.hdate { font-size:12px; opacity:.85; }
+.kicker { font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:#c9a94e; font-weight:700; margin-top:12px; }
+h1 { font-size:26px; margin:3px 0 2px; color:#fff; letter-spacing:-0.01em; }
+.sub { font-size:11.5px; letter-spacing:.13em; text-transform:uppercase; color:#fff; opacity:.72; }
+.exec { margin:16px 0; padding:14px 16px; border-radius:9px; background:#eef4fb; border:1px solid #cddffb; font-size:14.5px; }
+.exec b { color:#123a5e; }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:14px 0 4px; }
+.tile { background:#fff; border:1px solid #e4e7eb; border-radius:10px; padding:11px 13px; }
+.tile .lab { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:#6b7280; font-weight:700; }
+.tile .prx { font-size:11px; color:#9aa1ab; }
+.tile .val { font-size:21px; font-weight:700; margin-top:3px; color:#123a5e; }
+.tile .chg { font-size:12.5px; font-weight:600; }
+.up{color:#0f7a52;} .down{color:#c0392b;} .flat{color:#6b7280;}
+h2 { font-size:15px; text-transform:uppercase; letter-spacing:.06em; color:#123a5e; margin:30px 0 8px; padding-bottom:5px; border-bottom:1px solid #e4e7eb; }
+h3 { font-size:13.5px; color:#123a5e; margin:16px 0 6px; }
+p { margin:9px 0; font-size:14.5px; } li { margin:6px 0; font-size:14.5px; }
+.lead { font-weight:600; color:#123a5e; }
+table { width:100%; border-collapse:collapse; margin:10px 0; font-size:13.5px; background:#fff; border:1px solid #e4e7eb; border-radius:8px; overflow:hidden; }
+th,td { padding:8px 10px; text-align:right; border-bottom:1px solid #eef0f3; }
+th:first-child,td:first-child { text-align:left; }
+thead th { background:#123a5e; color:#fff; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:.03em; }
+tbody tr:last-child td { border-bottom:none; }
+.hl { background:#fff8ec; }
+tr.sec td { background:#123a5e; color:#fff; font-weight:700; text-transform:uppercase; font-size:11px; letter-spacing:.05em; }
+tr.tot td { font-weight:700; border-top:2px solid #cbd2da; background:#f6f8fa; }
+tr.net td { font-weight:700; background:#fff8ec; font-size:14px; }
+.xcheck { background:#fffdf5; border:1px solid #ece4c7; border-left:4px solid #c9a94e; padding:12px 15px; border-radius:0 6px 6px 0; font-size:13.5px; margin-top:10px; }
+.pending { background:#f6f8fa; border:1px dashed #cbd2da; border-radius:10px; padding:22px 20px; text-align:center; color:#64717f; font-size:13px; margin-top:8px; }
+.pending b { color:#123a5e; }
+.chartbox { background:#fff; border:1px solid #e4e7eb; border-radius:10px; padding:14px; height:320px; margin-top:8px; }
+.chartcap { font-size:12px; color:#6b7280; margin-top:6px; }
+.cgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:12px; margin-top:8px; }
+.cbox { background:#fff; border:1px solid #e4e7eb; border-radius:10px; padding:12px 12px 8px; }
+.cbox .ct { font-size:13px; font-weight:700; color:#123a5e; display:flex; justify-content:space-between; align-items:baseline; }
+.cbox .cv { height:200px; margin-top:4px; }
+.badge { font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; }
+.badge.below { background:#fde8e6; color:#c0392b; } .badge.low { background:#fce3d6; color:#9a4a10; }
+.cbox.hfi { background:#fdf8ec; }
+.cbox .cv.tall { height:360px; }
+.model { background:#0f1e33; color:#eaf0f7; border-radius:12px; padding:18px 20px; margin:10px 0; }
+.model h2 { color:#fff; border-color:#2a3f5f; margin-top:6px; }
+.model .big { font-size:13px; }
+.gauge { margin:14px 0 6px; }
+.gauge .bar { position:relative; height:34px; background:linear-gradient(90deg,#7a1f1f 0%,#7a1f1f 14%,#8a5a12 14%,#8a5a12 22%,#1f5f3a 22%,#1f5f3a 100%); border-radius:6px; }
+.gauge .mark { position:absolute; top:-6px; bottom:-6px; width:2px; background:#fff; }
+.gauge .lbl { position:absolute; top:38px; font-size:10.5px; color:#c7d2df; transform:translateX(-50%); white-space:nowrap; }
+.gauge .cur { position:absolute; top:-20px; font-size:11px; font-weight:700; color:#fff; transform:translateX(-50%); }
+.model table { background:#13233b; border-color:#2a3f5f; }
+.model thead th { background:#294067; }
+.model td,.model th { border-color:#2a3f5f; color:#eaf0f7; }
+.model .hl { background:#3a2f12; }
+.cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; margin:10px 0; }
+.card { border-radius:10px; padding:13px 15px; border:1px solid #e4e7eb; background:#fff; }
+.card.bull { border-top:3px solid #0f7a52; } .card.base { border-top:3px solid #b78a1a; } .card.bear { border-top:3px solid #c0392b; }
+.card h4 { margin:0 0 6px; font-size:13px; text-transform:uppercase; letter-spacing:.04em; }
+.card.bull h4{color:#0f7a52;} .card.base h4{color:#b78a1a;} .card.bear h4{color:#c0392b;}
+.card p { font-size:13px; margin:5px 0; }
+.tag { display:inline-block; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:20px; margin-right:6px; }
+.tag.bear{background:#fde8e6;color:#c0392b;} .tag.bull{background:#e3f5ea;color:#0f7a52;} .tag.neu{background:#eceff3;color:#4b5563;}
+.note { font-size:12.5px; color:#7a828c; font-style:italic; }
+.watch { background:#eef4fb; border:1px solid #cddffb; border-radius:10px; padding:12px 15px; }
+footer { margin-top:34px; padding-top:14px; border-top:1px solid #e4e7eb; font-size:12.5px; color:#6b7280; }
+footer a { color:#2563a8; text-decoration:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="jk">
+    <div class="brandrow">
+      <div class="brand"><svg width="34" height="34" viewBox="0 0 40 40" aria-label="JK Consulting"><rect width="40" height="40" rx="8" fill="#c9a94e"/><text x="20" y="27" font-size="19" font-weight="700" fill="#123a5e" text-anchor="middle" font-family="Georgia,serif">JK</text></svg><span class="wordmark">JK CONSULTING</span></div>
+      <div class="hdate">Oil &amp; Gas Desk · Weekly · Jul 19, 2026</div>
+    </div>
+    <div class="kicker">Oil &amp; Gas Commodity Desk · Weekly Report</div>
+    <h1>The reprieve is real — the crisis clock is only paused</h1>
+    <div class="sub">Wk ending Jul 10 · Timed to EIA · Independent, fundamentals-first</div>
+  </header>
+  <div class="pad">
+
+  <div class="exec">
+    <b>Executive read.</b> This week reinforces the desk's "rented, not owned" stance. US crude drew a modest 1.7 mmbbl and a fresh geopolitical bid lifted Brent back to ~$88 / WTI ~$82 — but the tape is being driven by Hormuz risk, not by crisis-pace draws. The key insight from the inventory model: <b>global OECD stocks are being cushioned right now by the release of Gulf floating storage, which buys only ~2 weeks of relief.</b> The genuine danger is the post-July setup — SPR releases ending, Asia ex-China demand returning, and a China import rebound risk — which together could restart OECD draws near ~5 mb/d, putting the operational floor ~101 days out. <b>Base case: draws resume at ~5 mb/d after July; wide distribution around it, gated almost entirely by Hormuz flows and incoming ballast-tanker traffic.</b> We are not chasing this rally; we respect the tail.
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+  <div class="note">Live ETF proxies (USO≈WTI, BNO≈Brent, UNG≈Henry Hub) — snapshot embedded; refreshes live in the Cowork artifact.</div>
+
+  <!-- ===== INVENTORY MODEL — CENTERPIECE ===== -->
+  <div class="model">
+    <h2>Global Inventory Balance Model — the core question</h2>
+    <p class="big">OECD commercial crude, the desk's scaffold (adapted from the client's framework; inputs verified independently each week). Baseline = April, the last officially reported month; May–June est. draw ≈80 mmbbl is deliberately excluded, making the buffer conservative.</p>
+
+    <div class="gauge">
+      <div class="bar">
+        <div class="mark" style="left:50%"></div><div class="lbl" style="left:50%">Engineering floor<br>700 mmbbl (24d)</div>
+        <div class="mark" style="left:60.1%"></div><div class="lbl" style="left:60.1%; top:56px">Operational floor<br>842 mmbbl (30d)</div>
+        <div class="cur" style="left:96.3%">1,348 ▼</div><div class="mark" style="left:96.3%; background:#ffd54a"></div>
+      </div>
+      <div style="height:52px"></div>
+      <p class="note" style="color:#c7d2df">Scale 0–1,400 mmbbl. Current 1,348 mmbbl · 48.1 days cover. Buffer to operational floor: <b style="color:#fff">506 mmbbl (18.1 days)</b>; to engineering floor: <b style="color:#fff">674 mmbbl (24.1 days)</b>.</p>
+    </div>
+
+    <h3 style="color:#fff">Days-to-floor sensitivity (net OECD commercial crude draw)</h3>
+    <table>
+      <thead><tr><th>Net draw rate</th><th>→ Operational floor (506 mmbbl)</th><th>→ Engineering floor (674 mmbbl)</th></tr></thead>
+      <tbody>
+        <tr><td>10.0 mb/d</td><td>50.6 d (~1.7 mo)</td><td>67.4 d (~2.2 mo)</td></tr>
+        <tr><td>7.5 mb/d</td><td>67.5 d (~2.2 mo)</td><td>89.9 d (~3.0 mo)</td></tr>
+        <tr class="hl"><td><b>5.0 mb/d — base case</b></td><td><b>101.2 d (~3.3 mo)</b></td><td><b>134.9 d (~4.4 mo)</b></td></tr>
+        <tr><td>2.5 mb/d — "no imminent danger"</td><td>202.4 d (~6.6 mo)</td><td>269.8 d (~8.9 mo)</td></tr>
+      </tbody>
+    </table>
+    <p class="note" style="color:#c7d2df">Below ~2.5 mb/d there is &gt;200 days of runway. At ~5+ mb/d the market is on a crisis clock. The whole question reduces to: <b style="color:#fff">which row are we on after July?</b></p>
+  </div>
+
+  <h3>The four swing factors — this week's read</h3>
+  <table>
+    <thead><tr><th>Factor</th><th>Direction</th><th>Desk note</th></tr></thead>
+    <tbody>
+      <tr><td>Hormuz / Gulf flows</td><td>+2–5 mb/d?</td><td style="text-align:left">~7–10 mb/d still shut in; tanker willingness is the binding constraint. Watch <b>ballast traffic</b> — the cleanest leading signal.</td></tr>
+      <tr><td>OECD SPR cliff</td><td>−2.5–3 mb/d</td><td style="text-align:left">Releases scheduled to end (~hard limit); timing pushed slightly by floating-storage surge. The single biggest post-July swing.</td></tr>
+      <tr><td>China imports</td><td>Skew ↑</td><td style="text-align:left">−4.76 (May), −6.4 (June) mb/d — driven by price-control-led refinery cuts. More upside than downside risk; a rebound pressures OECD stocks.</td></tr>
+      <tr><td>Asia ex-China demand</td><td>+1.5–3 mb/d</td><td style="text-align:left">India/Pakistan/Bangladesh/SE Asia restocking off Gulf floating storage; returns to market as inventories normalize.</td></tr>
+    </tbody>
+  </table>
+  <p><span class="lead">Independent overlay.</span> The current draw pace is <em>not</em> yet at crisis rate — this week's US distillate <b>build</b> (+4.6 mmbbl) and a modest crude draw are consistent with the floating-storage glut still washing through, not with an accelerating global deficit. The model's ~5 mb/d clock is a <em>post-July</em> risk that has not yet started. That is the honest read: latent, not active. We flag the client's more aggressive $150–300 paths as tail scenarios contingent on a sustained Hormuz re-closure, not a base case.</p>
+
+  <!-- ===== EIA TABLE ===== -->
+  <h2>EIA Weekly Petroleum Status — week ending Jul 10</h2>
+  <table>
+    <thead><tr><th>Series</th><th>Weekly change</th><th>Level / vs. 5-yr avg</th></tr></thead>
+    <tbody>
+      <tr><td>Commercial crude</td><td class="down">−1.7 mmbbl</td><td>409.7 mmbbl · ~6% below</td></tr>
+      <tr><td>Gasoline</td><td class="down">−1.5 mmbbl</td><td>~8% below (tight)</td></tr>
+      <tr><td>Distillate</td><td class="up">+4.6 mmbbl</td><td>~11% below (still lean, but building)</td></tr>
+      <tr><td>Cushing hub</td><td class="up">+0.43 mmbbl</td><td>no squeeze signal this week</td></tr>
+      <tr><td>Refinery utilization</td><td>—</td><td><b>96.2%</b> (inputs 17.1 mb/d, +99 kb/d)</td></tr>
+      <tr><td>Crude imports</td><td class="up">+60 kb/d</td><td>5.7 mb/d</td></tr>
+    </tbody>
+  </table>
+  <p>The product split is the tell: <b>gasoline tight</b> (8% below, drawing into peak driving season) while <b>distillate is building</b> off a low base. A distillate build at 96% utilization hints at softening middle-distillate demand — a mild <span class="tag neu">bearish demand</span> flag under the geopolitical headline. US remains the "supply of last resort," having drawn ~30 mmbbl/month in May and June via a ~1.5 mb/d export surge; when it hits operational minimums (~late July), exports fall and the burden shifts to Asian buyers — the model's zero-sum inflection.</p>
+
+  <!-- ===== CRUDE BALANCE (storage math) ===== -->
+  <h2>Crude balance — the "storage math"</h2>
+  <p>HFI's method, improved: decompose the weekly crude stock change into its supply and demand flows, bridge it visually, and cross-check against the actual EIA print. <span class="note">Shown with the week-ending-Jun-26 example; live runs compute this from EIA weekly flow data once the pipeline extension lands.</span></p>
+  <table>
+    <thead><tr><th>Component</th><th>Daily (mb/d)</th><th>Weekly (mmbbl)</th></tr></thead>
+    <tbody>
+      <tr class="sec"><td colspan="3">Demand</td></tr>
+      <tr><td>Refinery throughput</td><td>17.00</td><td>119.00</td></tr>
+      <tr><td>Crude exports</td><td>4.60</td><td>32.19</td></tr>
+      <tr class="tot"><td>Total demand</td><td>21.60</td><td>151.19</td></tr>
+      <tr class="sec"><td colspan="3">Supply</td></tr>
+      <tr><td>US oil production</td><td>13.60</td><td>95.20</td></tr>
+      <tr><td>Crude imports</td><td>5.32</td><td>37.26</td></tr>
+      <tr><td>Transfers to crude</td><td>0.70</td><td>4.90</td></tr>
+      <tr><td>SPR</td><td>0.79</td><td>5.50</td></tr>
+      <tr class="tot"><td>Total supply</td><td>20.41</td><td>142.86</td></tr>
+      <tr class="net"><td>Net result — implied stock change</td><td class="down">−1.19</td><td class="down">−8.33 (draw)</td></tr>
+    </tbody>
+  </table>
+  <div class="chartbox" style="height:210px"><canvas id="wfChart"></canvas></div>
+  <div class="chartcap">Supply builds (green) minus demand draws (red) bridge to the implied ≈ −8.3 mmbbl crude draw (gold). Floating-bar waterfall.</div>
+  <div class="xcheck"><b>Cross-check (the desk's addition).</b> The estimate hinges on refinery throughput — a 0.1 mb/d miss moves the weekly result ~0.7 mmbbl. Last week's <em>actual</em> throughput printed <b>17.11 mb/d</b> vs. the 17.00 estimate, which alone deepens the implied draw by ~0.8 mmbbl. Each live run will show <b>implied vs. EIA-reported</b> crude change and flag the gap — the "adjustment" that captures unaccounted barrels — so we see when the flows and the stock print disagree.</div>
+
+  <!-- ===== INVENTORY VS PRIOR YEARS (HFI style) ===== -->
+  <h2>US inventories vs. prior years</h2>
+  <p>The HFI-style seasonal view — each year's weekly track plus the trailing 5-yr average, with 2026 in bold gold. Crude built <em>above</em> the 5-yr average through spring, then rolled over into a steep summer draw that has taken it below average. The read across products isn't uniform: <b>lean crude, tight products, and a strikingly low Cushing</b>. <b>Cushing is the standout</b> — ~20.0 mmbbl, ~34% below its 5-yr average and pinned near the floor of its range, a WTI-delivery-hub squeeze signal a headline crude number hides.</p>
+  <div class="cbox hfi"><div class="ct"><span>US Commercial Crude Storage (kbbls)</span><span class="badge below">2026: 409,665 · −6% vs 5-yr</span></div><div class="cv tall"><canvas id="sCrude"></canvas></div></div>
+  <div class="cgrid" style="margin-top:12px">
+    <div class="cbox hfi"><div class="ct"><span>Gasoline (kbbls)</span><span class="badge below">−8%</span></div><div class="cv"><canvas id="sGas"></canvas></div></div>
+    <div class="cbox hfi"><div class="ct"><span>Distillate (kbbls)</span><span class="badge below">−11%</span></div><div class="cv"><canvas id="sDist"></canvas></div></div>
+    <div class="cbox hfi"><div class="ct"><span>Cushing (kbbls)</span><span class="badge low">−34%</span></div><div class="cv"><canvas id="sCush"></canvas></div></div>
+  </div>
+  <div class="chartcap">EIA weekly (WPSR) via the desk's EIA pipeline; 2026 (gold) vs individual prior years and the trailing 5-yr average (bold blue). Latest week: Jul 10. Source: EIA.</div>
+
+  <!-- ===== PRICE & CURVE ===== -->
+  <h2>Price &amp; curve</h2>
+  <div class="chartbox"><canvas id="priceChart"></canvas></div>
+  <div class="chartcap">Brent &amp; WTI spot (FRED daily, Apr–Jul 13 2026). The arc: an April spike (Brent ~$138 intraday) on the Hormuz-era shock, a collapse to ~$69 as the MOU/ceasefire delivered the reprieve, and a mid-July bounce as the ceasefire frayed. FRED lags ~5 sessions; live tiles above show the ~$82–88 print since.</div>
+  <p><span class="lead">Structure is the tell to watch next.</span> Whether front-month <b>backwardation</b> deepens (real tightness) or flattens toward <b>contango</b> (premium fading), and whether <b>Dubai/Oman</b> sour differentials blow out — Gulf/Asian scarcity shows there first and propagates to the Atlantic Basin. These live curve values (M1–M2, Dec–Dec, Brent–Dubai EFS) are pulled from CME/primary sources in the automated runs; this week's setup says: a firm backwardation + Dubai premium <em>through</em> any de-escalation headline would validate the bull case.</p>
+
+  <!-- ===== 3-2-1 CRACK ===== -->
+  <h2>Refining margins — 3-2-1 crack</h2>
+  <p>The 3-2-1 crack — <span class="lead">(2 × 42 × RBOB + 42 × heating oil − 3 × WTI)</span>, the margin from turning three barrels of crude into two of gasoline and one of distillate — is the cleanest real-time read on product tightness and refining demand. It has <b>blown out</b>: the front basket printed ≈ <b>$211 per 3-bbl</b> (≈ <b>$70/bbl</b>), versus a ~$20–30/bbl norm. A margin that extreme is refiners bidding aggressively for crude, and it corroborates the inventory picture — tight gasoline and lean distillate. Rising cracks pull crude up; a crack this stretched also flags eventual demand rationing if it persists.</p>
+  <div class="pending" id="crackBox"><b>Chart pending live data.</b> Renders automatically once the extended EIA price pipeline (<code>fetch_flows_prices.py</code>) runs — it pulls NY Harbor RBOB &amp; heating-oil and Cushing WTI spot to compute the daily crack. Current reference value ≈ $211 (Barchart, <code>-3·CL + 2·42·RB + 42·HO</code>).</div>
+  <div class="chartcap">Once wired: daily 3-2-1 crack, 12-month history, in $/3-bbl basket. Source: EIA spot (desk pipeline).</div>
+
+  <!-- ===== SUPPLY / DEMAND ===== -->
+  <h2>Supply</h2>
+  <ul>
+    <li><span class="tag neu">OPEC+</span>Turned defensive — <b>cut 188 kb/d from August</b> (Jul 5), reversing the 2026 unwind. Note the vulnerability: much OPEC spare capacity <em>also</em> transits Hormuz, so it is not a reliable backstop against a chokepoint event.</li>
+    <li><span class="tag bear">Non-OPEC</span>US output tracking a record <b>~13.6 mb/d</b> for 2026; Brazil/Guyana/Canada adding — the structural weight that reasserts if the premium fades.</li>
+    <li><span class="tag bull">Russia</span>Reported <b>~40% / ~2 mb/d</b> of petroleum exports offline from Ukrainian drone strikes, plus a refined-product export ban — a large, under-priced global tightener <em>if</em> it persists for months. Magnitude/duration flagged for independent verification.</li>
+  </ul>
+
+  <h2>Demand</h2>
+  <ul>
+    <li><b>China</b> — the wildcard. Imports collapsed −4.76 (May) / −6.4 (June) mb/d on price-control-driven refinery-run cuts; the desk sees upside skew (China likely draws SPR <em>and</em> lets product prices rise to restart runs). Any rebound is a direct hit to OECD stocks.</li>
+    <li><b>Asia ex-China</b> restocking off released Gulf floating storage; +1.5–3 mb/d of incremental demand returns as inventories normalize. <b>Korea KOGAS gas inventories at a 5-yr low</b> — an LNG-side stress marker.</li>
+    <li><b>US products</b> — gasoline tight, distillate softening; net demand read is mixed, not booming.</li>
+  </ul>
+
+  <h2>Positioning</h2>
+  <p>A ~14% one-week spike into a live headline typically pulls in fresh managed-money length, leaving the tape exposed to an air-pocket on credible de-escalation. Confirm with Friday's CFTC COT (managed-money net length and the week's change); crowded longs into the fragile 60-day ceasefire are a tactical risk even for those who share the structural bull case.</p>
+
+  <!-- ===== SCENARIOS ===== -->
+  <h2>Scenarios &amp; what confirms each</h2>
+  <div class="cards">
+    <div class="card bull">
+      <h4>Bull — crisis resumes</h4>
+      <p>Hormuz re-closes / ballast traffic stays weak; SPR cliff + Asia return drive draws to 7.5+ mb/d. Operational floor &lt;90 days.</p>
+      <p><b>Confirms:</b> Dubai/Oman blow-out, deepening backwardation, falling ballast counts, Brent &gt;$90.</p>
+    </div>
+    <div class="card base">
+      <h4>Base — latent, ~5 mb/d</h4>
+      <p>Factors wash; draws resume ~5 mb/d after July → operational floor ~101 days. Price rangey, premium-sensitive.</p>
+      <p><b>Confirms:</b> partial Hormuz flow (+2–5 mb/d), SPR ending on schedule, China ~4–5 mb/d below pre-war.</p>
+    </div>
+    <div class="card bear">
+      <h4>Bear — reversion</h4>
+      <p>Ceasefire holds, Hormuz reopens, Russian barrels return; record non-OPEC supply reasserts. WTI high-$60s/low-$70s.</p>
+      <p><b>Confirms:</b> contango creep, fading cracks, rising ballast traffic, China imports stay depressed.</p>
+    </div>
+  </div>
+
+  <!-- ===== NAT GAS ===== -->
+  <h2>Natural gas (brief)</h2>
+  <p>Henry Hub ~$2.8–3.3 (summer 2026), a secondary focus. Watch EIA storage vs. the 5-yr average (Thu 10:30 ET), cooling-degree-day forecasts, and LNG feedgas utilization. Global linkage runs through TTF/JKM — and Asian LNG is a live stress point given Hormuz cargo diversions (Korea KOGAS at a 5-yr inventory low). Prior-winter volatility (a late-Jan polar-vortex spike drove Henry Hub briefly to ~$30 spot) is a reminder of the tail on the gas side.</p>
+
+  <div class="watch">
+    <b>Watch list — the two master signals + levels</b>
+    <ul>
+      <li><b>Hormuz:</b> Iranian harassment of traffic + <b>incoming ballast (empty) tanker counts</b> — the leading read on whether 2–5 mb/d of non-Iran loadings actually resume.</li>
+      <li><b>Curve/physical:</b> backwardation depth &amp; Dubai/Oman premium — real tightness vs. fading premium.</li>
+      <li><b>WTI $80</b> premium pivot; <b>Brent $90</b> escalation / <b>sub-$75</b> premium gone.</li>
+      <li><b>Post-July:</b> confirmation the SPR cliff has hit and Asia ex-China demand is returning — the model's crisis-clock trigger.</li>
+    </ul>
+  </div>
+
+  <footer>
+    <b>Sources:</b>
+    <a href="https://www.eia.gov/petroleum/supply/weekly/">EIA Weekly Petroleum Status</a> ·
+    <a href="https://www.rigzone.com/news/usa_crude_oil_stocks_drop_almost_2mm_barrels_wow-16-jul-2026-184143-article/">Rigzone (EIA week 7/10)</a> ·
+    <a href="https://oilprice.com/Latest-Energy-News/World-News/US-Crude-Oil-Gasoline-Inventories-Still-Falling.html">OilPrice (gasoline/distillate)</a> ·
+    <a href="https://www.eia.gov/outlooks/steo/">EIA STEO</a> ·
+    <a href="https://www.aljazeera.com/economy/2026/7/6/opec-countries-say-they-will-expand-monthly-oil-production">OPEC+ (Al Jazeera)</a> ·
+    Kostohryz, "Detailed Analysis of OECD and Global Crude Oil Inventories," Successful Portfolio Strategy (Jul 1 2026)
+    <br><span class="note">Sample weekly report · independent desk, fundamentals-first · not investment advice.</span>
+  </footer>
+  </div><!-- /pad -->
+
+</div>
+
+<script>
+// ---- Live tape with embedded snapshot fallback ----
+const LIVE_TOOL='mcp__8b10e7f7-6344-45ed-86c2-84475eb96419__get_live_price_data';
+const DEFS=[{code:'USO.US',lab:'WTI',prx:'via USO'},{code:'BNO.US',lab:'Brent',prx:'via BNO'},{code:'UNG.US',lab:'Nat Gas',prx:'via UNG'},{code:'XLE.US',lab:'Energy (Majors)',prx:'XLE'},{code:'XOP.US',lab:'E&P',prx:'XOP'}];
+const SNAP={'USO.US':{close:123.96,change:4.66,change_p:3.91},'BNO.US':{close:48.70,change:1.92,change_p:4.10},'UNG.US':{close:10.51,change:0.09,change_p:0.86},'XLE.US':{close:57.68,change:0.66,change_p:1.16},'XOP.US':{close:170.18,change:3.74,change_p:2.25}};
+function fmt(n){return (n==null||isNaN(n))?'—':Number(n).toFixed(2);}
+function pctS(n){return (n==null||isNaN(n))?'':(n>=0?'+':'')+Number(n).toFixed(2)+'%';}
+function render(by,live){
+  const box=document.getElementById('tiles'); box.innerHTML='';
+  DEFS.forEach(d=>{const o=by[d.code]||{};const c=o.change_p;const cls=c>0?'up':c<0?'down':'flat';const ar=c>0?'▲':c<0?'▼':'·';
+    const el=document.createElement('div');el.className='tile';
+    el.innerHTML=`<div class="lab">${d.lab}</div><div class="prx">${d.prx}${live?'':' · 7/19 snapshot'}</div><div class="val">${fmt(o.close)}</div><div class="chg ${cls}">${ar} ${fmt(o.change)} (${pctS(c)})</div>`;
+    box.appendChild(el);});
+}
+render(SNAP,false);
+(async()=>{try{
+  const r=await window.cowork.callMcpTool(LIVE_TOOL,{ticker:'USO.US',additional_symbols:['BNO.US','UNG.US','XLE.US','XOP.US']});
+  let p=r.structuredContent??JSON.parse(r.content[0].text); if(p&&p.result)p=p.result; let arr=typeof p==='string'?JSON.parse(p):p;
+  if(Array.isArray(arr)){const by={};arr.forEach(o=>by[o.code]=o);render(by,true);}
+}catch(e){/* keep snapshot */}})();
+
+// ---- Price chart ----
+const D=[['4/1',101.9,119.56],['4/7',114.58,138.21],['4/13',100.72,123.28],['4/20',91.06,103.4],['4/28',103.45,117.62],['5/1',105.38,118.26],['5/5',105.66,114.51],['5/12',105.78,111.37],['5/18',112.25,116.73],['5/19',112.09,114.64],['5/26',97.63,102.75],['6/1',95.96,98.29],['6/3',99.76,101.69],['6/8',95.0,97.46],['6/12',88.62,88.64],['6/16',79.8,80.5],['6/22',78.94,76.49],['6/24',71.42,72.09],['6/26',70.3,70.16],['7/1',69.74,69.24],['7/6',69.6,69.56],['7/8',74.56,76.5],['7/10',72.45,74.34],['7/13',79.2,81.62]];
+function whenChart(fn){if(window.Chart){fn();}else{setTimeout(function(){whenChart(fn);},60);}}
+whenChart(()=>{const ctx=document.getElementById('priceChart');if(!ctx)return;
+  new Chart(ctx,{type:'line',data:{labels:D.map(d=>d[0]),datasets:[
+    {label:'Brent ($/bbl)',data:D.map(d=>d[2]),borderColor:'#c0392b',backgroundColor:'rgba(179,38,30,.05)',borderWidth:2,tension:.25,pointRadius:0,pointHoverRadius:4,fill:true},
+    {label:'WTI ($/bbl)',data:D.map(d=>d[1]),borderColor:'#123a5e',backgroundColor:'rgba(16,36,62,.05)',borderWidth:2,tension:.25,pointRadius:0,pointHoverRadius:4,fill:true}
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{position:'top',labels:{boxWidth:14,font:{size:12}}}},
+    scales:{y:{ticks:{callback:v=>'$'+v},grid:{color:'#eef0f3'}},x:{grid:{display:false},ticks:{maxTicksLimit:10}}}}});
+});
+</script>
+
+<script>
+// ---- Seasonal 5-yr band charts (Rory Johnston style) ----
+const BANDS = {"crude_ex_spr":{"min":[413.3,412.7,411.7,415.1,410.4,411.5,416.0,413.4,411.6,415.9,413.4,409.9,412.4,421.8,413.7,414.4,415.7,424.2,420.8,419.8,414.7,416.8,418.7,418.3,415.1,419.0,426.0,422.2,419.0,426.6,423.7,425.0,420.7,418.3,416.6,417.4,414.0,413.0,414.1,420.3,419.7,421.1,416.0,421.2,427.6,424.2,419.1,413.9,421.9,418.2,416.8,415.6],"max":[482.2,486.6,476.7,475.7,469.0,471.4,479.0,484.6,498.4,500.8,502.7,501.8,498.3,492.4,493.0,493.1,485.1,484.7,486.0,484.3,479.3,474.0,467.1,463.3,460.7,452.2,458.1,457.4,456.8,439.8,445.6,439.7,433.5,425.4,427.2,429.6,430.8,430.6,429.2,439.1,437.4,439.9,436.8,440.8,439.4,448.1,449.7,445.0,440.8,443.7,436.6,431.1],"avg":[436.4,438.2,434.7,436.1,437.1,442.4,446.7,451.1,454.2,455.8,455.9,453.5,454.4,456.9,455.1,453.0,452.4,453.9,454.7,452.3,449.7,448.4,448.9,443.7,439.5,437.8,438.8,437.2,434.0,433.1,433.9,431.5,426.9,422.0,421.3,422.3,419.2,418.6,419.5,426.7,425.6,428.1,426.9,432.1,433.0,433.6,431.4,428.5,428.2,426.2,423.4,421.6],"cur":[419.1,422.4,426.0,423.8,420.3,428.8,419.8,435.8,439.3,443.1,449.3,456.2,461.6,464.7,463.8,465.7,459.5,457.2,452.9,445.0,441.7,433.7,426.5,418.2,412.1,408.4,411.4,409.7,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"gasoline":{"min":[226.8,230.3,232.0,234.6,239.6,241.9,240.1,239.2,231.6,232.1,229.6,226.7,222.6,222.2,223.5,221.1,222.9,219.7,218.3,216.3,216.1,218.2,217.5,219.0,221.6,219.1,219.5,218.4,217.6,219.1,216.4,215.7,215.6,214.5,214.7,213.0,214.6,212.2,207.5,209.5,209.4,207.9,206.6,205.7,205.1,207.4,209.9,214.4,218.6,222.0,222.7,222.7],"max":[245.5,248.1,253.0,254.1,256.4,257.1,257.1,248.3,246.8,241.1,240.6,239.1,237.6,236.0,235.0,235.1,235.8,236.2,234.2,232.5,234.0,241.0,243.0,240.1,241.6,235.5,236.5,236.4,234.2,228.9,227.5,228.2,225.9,227.2,220.0,221.6,221.6,221.8,227.0,225.7,223.3,223.5,223.5,217.2,215.7,216.4,218.2,223.6,224.0,226.7,228.5,237.0],"avg":[239.1,242.7,245.3,248.0,249.3,248.3,247.7,244.2,240.2,236.8,234.3,233.5,231.9,231.0,230.5,228.7,228.0,226.9,225.0,224.2,224.2,227.5,228.9,228.3,229.4,227.6,228.0,229.8,227.1,225.1,223.3,221.7,220.7,220.0,217.5,218.6,219.0,218.2,220.3,218.5,216.4,215.5,213.2,210.6,209.5,211.0,213.9,218.2,221.3,224.9,224.8,231.6],"cur":[242.0,251.0,257.0,257.2,257.9,259.1,255.8,254.8,253.1,249.5,244.0,241.4,240.9,239.3,232.9,228.4,222.3,219.8,215.7,214.2,211.6,215.0,215.1,214.2,216.3,214.0,212.1,210.5,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"distillate":{"min":[117.7,115.8,115.3,117.6,118.5,118.6,116.6,119.1,113.9,114.2,112.1,113.5,113.1,111.1,108.7,106.9,104.9,104.0,103.6,104.1,103.4,107.6,108.9,109.4,105.3,103.6,102.8,107.0,109.9,109.3,111.5,112.3,111.6,111.7,111.8,116.0,117.2,114.4,110.9,106.1,106.2,106.4,106.8,106.3,106.6,105.6,110.8,112.0,113.5,115.0,115.8,118.8],"max":[163.2,163.7,162.8,162.8,161.1,157.7,152.7,143.0,137.5,137.7,141.6,144.1,145.5,143.5,142.4,139.0,136.2,134.4,132.1,129.1,132.8,137.2,136.2,137.9,137.1,138.7,142.3,141.0,137.9,138.7,140.5,137.8,138.5,136.7,133.6,131.9,129.3,129.7,129.3,129.3,125.4,125.0,127.1,124.5,123.7,121.7,123.9,126.6,123.8,124.2,122.4,126.8],"avg":[134.3,134.8,133.1,131.6,129.9,128.3,126.5,125.2,122.0,121.4,120.7,121.2,120.7,119.2,117.5,116.3,115.0,113.5,112.7,112.5,113.7,117.6,118.4,118.6,118.1,117.3,120.3,121.3,120.6,121.1,121.6,121.1,121.1,120.7,120.5,123.2,123.2,122.0,120.9,118.5,115.5,114.6,114.1,113.2,112.6,112.4,114.8,118.0,119.1,119.2,118.7,123.6],"cur":[129.3,129.2,132.6,132.9,127.4,124.7,120.1,120.4,120.8,119.4,116.9,119.9,117.8,114.7,111.6,108.1,103.6,102.3,102.5,102.9,100.8,102.3,102.1,103.1,106.1,108.6,103.6,108.2,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]},"cushing":{"min":[20.0,20.8,20.7,21.0,20.9,21.8,23.3,22.8,22.2,24.0,23.5,22.7,25.1,25.8,25.1,25.0,25.7,25.0,23.9,23.4,23.5,23.4,22.6,22.0,21.3,20.7,21.2,21.4,21.9,22.6,23.0,23.1,23.5,22.6,24.2,23.9,22.7,22.0,22.1,21.8,21.0,21.2,21.5,22.9,22.5,21.8,21.8,21.3,21.6,20.9,21.6,22.1],"max":[57.2,52.5,50.2,48.7,48.0,45.0,47.8,48.3,48.8,48.2,46.3,47.1,46.3,46.7,45.4,46.1,46.3,45.9,45.8,44.8,45.5,45.7,43.6,42.0,43.2,42.8,41.2,38.3,35.7,34.9,34.6,33.8,33.7,34.5,36.4,35.3,33.8,34.0,35.5,33.6,31.2,27.3,28.2,27.2,26.6,27.4,28.5,30.9,32.2,33.7,34.7,37.3],"avg":[34.8,34.1,33.7,33.3,32.8,32.2,33.0,33.5,33.7,33.2,32.7,32.6,32.9,33.1,32.5,32.8,33.6,33.7,33.2,33.3,33.5,33.8,33.2,32.5,32.2,31.8,31.1,30.4,29.5,29.2,29.6,28.9,28.4,27.8,27.8,26.7,25.6,25.6,26.1,25.7,25.1,24.3,24.8,25.1,25.0,25.0,25.3,26.0,26.4,27.0,27.6,28.4],"cur":[22.8,23.6,25.1,24.8,24.0,25.1,24.0,24.9,26.5,26.6,27.5,30.9,31.5,31.5,29.8,30.6,29.8,29.1,27.4,25.8,23.0,22.4,21.6,20.0,19.0,19.7,19.6,20.0,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]}};
+const MLBL = {0:'Jan',4:'Feb',8:'Mar',13:'Apr',17:'May',21:'Jun',26:'Jul',30:'Aug',35:'Sep',39:'Oct',43:'Nov',47:'Dec'};
+const WK = Array.from({length:52},(_,i)=>MLBL[i]||'');
+function band(canvasId, s){
+  const el=document.getElementById(canvasId); if(!el||!window.Chart) return;
+  new Chart(el,{type:'line',data:{labels:WK,datasets:[
+    {data:s.max,fill:'+1',backgroundColor:'rgba(16,36,62,0.10)',borderColor:'rgba(0,0,0,0)',pointRadius:0,tension:.2},
+    {data:s.min,fill:false,borderColor:'rgba(0,0,0,0)',pointRadius:0,tension:.2},
+    {data:s.avg,fill:false,borderColor:'#9aa1ab',borderDash:[5,4],borderWidth:1.5,pointRadius:0,tension:.2},
+    {data:s.cur,fill:false,borderColor:'#123a5e',borderWidth:2.5,pointRadius:0,tension:.2,spanGaps:false}
+  ]},options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:false}},
+    scales:{y:{grid:{color:'#eef0f3'},ticks:{font:{size:10}}},x:{grid:{display:false},ticks:{font:{size:10},autoSkip:false,callback:function(v,i){return WK[i]||'';}}}}});
+}
+// ---- HFI-style spaghetti (per-year lines + 5-yr avg + bold 2026) ----
+const SPAG = {"crude_ex_spr":{"2022":[413298,413813,416190,415143,410387,411508,416022,413425,411562,415907,413399,409950,412371,421753,413733,414424,415727,424214,420820,419801,414733,416758,418714,418328,415566,423800,427054,426609,422086,426553,432010,424954,421672,418346,427191,429633,430774,430559,429203,439082,437357,439945,436830,440755,435355,431665,419084,413898,424129,418234,418952,420646],"2023":[439607,448015,448548,452688,455111,471394,479041,480207,478513,480063,481180,473691,469952,470549,465968,460914,459633,462584,467624,455168,459657,459205,467124,463293,453690,452182,458128,457420,456820,439771,445622,439662,433528,422944,416637,420592,418456,416287,414063,424239,419748,421120,421893,435762,439354,448054,449664,445031,440773,443682,436568,431065],"2024":[432403,429911,420678,421912,427432,439450,442964,447163,448530,446994,445042,448207,451417,457258,459993,453625,460890,459528,457020,458845,454689,455922,459652,457105,460696,448539,445096,440226,436485,433049,429321,430678,426029,425183,418310,419143,417513,413042,416931,422741,420550,426024,425509,427658,429747,430292,428448,423375,421950,421016,416779,415601],"2025":[414642,412680,411663,415126,423790,427860,432493,430161,433775,435223,436968,433627,439792,442345,442860,443104,440408,438376,441830,443158,440363,436059,432415,420942,415106,418951,426021,422162,418993,426691,423662,426698,420684,418292,420707,424646,415361,414754,416546,420261,423785,422824,415966,421168,427581,424155,426929,427503,425691,424417,424822,422888],"2026":[419056,422447,426049,423754,420299,428829,419815,435804,439279,443103,449259,456185,461636,464717,463804,465729,459495,457182,452876,445013,441686,433712,426485,418222,412134,408359,411357,409665,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"avg5":[436432,438196,434746,436106,437147,442394,446712,451112,454157,455797,455860,453462,454369,456866,455114,453035,452355,453879,454661,452264,449742,448395,448916,443746,439480,437790,438776,437221,433996,433058,433878,431507,426895,422032,421342,422292,419214,418637,419526,426660,425597,428145,426860,432089,433008,433637,431447,428535,428166,426184,423423,421610]},"gasoline":{"2022":[240748,246621,247918,250037,248393,247061,246479,246011,244606,240991,238043,238828,236787,233139,232378,230805,228575,224968,220189,219707,218996,218184,217474,218963,221608,219112,224937,228435,225131,225294,220316,215674,215647,214475,214808,213040,214610,212188,207460,209482,209368,207890,206633,205733,207940,210998,213768,219087,223583,226113,223008,222662],"2023":[226776,230259,232022,234598,239606,241922,240066,239192,238058,235997,229598,226694,222575,222245,223544,221136,222878,219711,218330,216277,216070,218815,220923,221402,222005,219456,219452,218386,217600,219081,216420,216158,217626,217412,214746,220307,219476,220503,226984,225671,223301,223457,223522,217210,215670,216420,218184,223604,224013,226723,226054,236954],"2024":[244982,248065,252977,254134,250988,247330,247037,244205,239745,234083,230773,232072,227816,228531,227377,226743,227087,228002,227767,226822,228844,230946,233512,231232,233886,231672,229666,232994,227422,223757,225097,222203,220597,218394,219242,221552,221621,220083,221202,214898,212697,213575,210868,211280,206873,208927,212241,214603,219689,222037,223667,231384],"2025":[237714,243566,245898,248855,251088,248053,247902,248271,246838,241101,240574,239128,237577,235977,234019,229543,225540,225728,224706,225522,223081,228300,229804,230013,227938,232126,229468,232867,231129,228405,227082,226290,223570,222334,218539,219997,217650,216569,220694,219093,218826,216679,210738,206009,205064,207391,209904,214422,220819,225627,228489,234334],"2026":[242036,251013,256990,257213,257898,259058,255845,254834,253130,249476,244040,241447,240861,239272,232944,228374,222299,219795,215711,214163,211591,214955,215141,214235,216299,213966,212062,210529,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"avg5":[239139,242746,245300,247955,249297,248290,247716,244230,240170,236849,234253,233453,231869,230958,230460,228660,227978,226920,225044,224162,224194,227454,228939,228332,229402,227573,228012,229819,227089,225081,223277,221698,220673,219966,217467,218608,218995,218230,220281,218450,216386,215469,213204,210587,209509,211026,213904,218204,221338,224924,224775,231624]},"distillate":{"2022":[129383,127952,125154,122744,121814,120262,119678,119104,113874,114206,112135,113530,114301,111399,108735,107286,104942,104029,105264,106921,106392,108984,109709,109842,112401,111135,113803,112508,111724,109324,111490,112256,111594,111706,111801,116020,117250,114359,110916,106063,106187,106357,106784,106263,107383,109101,112648,118807,120171,119929,120212,118785],"2023":[117716,115777,115270,117590,120522,119237,121935,122114,122252,119715,116402,116683,113051,112445,112090,111513,110323,106153,106233,105672,106657,111731,113854,114288,114411,113366,118181,118194,117949,117153,115447,115743,116688,117923,118602,122533,119666,120064,118795,116958,113773,112087,111295,108001,106579,105561,110778,112045,113539,115024,115765,125855],"2024":[132383,134753,133336,130795,127574,125659,121651,121141,117010,117898,118522,117337,116069,117728,114968,116582,115850,116410,116365,116744,119288,122485,123366,121640,121263,119728,124612,128066,125313,126847,127796,126123,122811,123086,122715,125023,125148,122921,121637,118513,114979,113839,112862,115809,114415,114301,114717,118100,121335,118155,116461,122867],"2025":[128938,132015,128945,123951,118480,118615,116564,120472,119154,117595,114783,114362,114626,111082,109231,106878,107815,106708,103553,104132,103408,107638,108884,109398,105332,103622,102797,106970,109901,113536,112971,113685,116028,114242,115923,120638,124684,122999,123577,121559,117030,115551,112189,111546,110909,111080,112227,114286,116788,118500,118702,123679],"2026":[129273,129244,132592,132921,127368,124665,120099,120351,120780,119431,116904,119936,117825,114681,111559,108132,103638,102344,102534,102906,100799,102301,102101,103052,106116,108599,103619,108175,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"avg5":[134325,134832,133110,131584,129899,128291,126509,125165,121956,121432,120679,121201,120719,119224,117483,116262,115017,113544,112702,112510,113709,117610,118401,118623,118097,117309,120348,121348,120560,121121,121643,121124,121116,120737,120525,123222,123218,122014,120851,118480,115473,114559,114050,113226,112594,112352,114849,117970,119118,119152,118714,123606]},"cushing":{"2022":[34838,33524,31701,30528,27727,25827,23778,22806,22221,24007,25242,24233,25887,26337,26152,27450,28829,28242,25839,24778,25034,23441,22615,22043,21261,21330,21646,22789,23540,24466,25189,25381,25807,25284,24783,24648,24991,25683,25956,25647,26230,26897,28164,27241,25617,24730,24315,23942,24368,25221,25026,25270],"2023":[27781,31427,35694,38009,39052,39711,40411,40718,39828,37912,36849,35217,34247,33838,32750,33069,33610,34007,35468,37230,38858,40579,42133,42035,43244,42844,41239,38348,35739,34480,34639,33802,30669,29165,27415,24965,22901,21958,22090,21771,21013,21226,21498,23085,25010,25868,27722,29551,30779,32465,33973,34679],"2024":[34173,32074,30066,28094,28061,28771,29512,30970,31671,31451,31433,33540,33163,32993,33026,32367,33456,35336,34995,36320,34554,35408,33815,34122,33896,34241,33539,32664,30956,29850,30429,28764,28204,27536,26394,24690,22711,22827,23667,24914,25022,24676,25357,25879,25191,25051,24142,24192,22894,23002,22682,22540],"2025":[20038,20803,20655,20981,20947,21819,23291,24573,25697,24469,23460,22705,25078,25759,25105,25019,25701,24961,23892,23435,23510,24086,23683,22688,22224,20731,21195,21408,21863,22553,23006,23051,23470,22632,24222,23857,23561,23738,23467,22704,22001,21231,22565,22865,22519,21821,21753,21296,21604,20862,21569,22112],"2026":[22840,23585,25063,24785,24042,25113,24018,24899,26463,26580,27524,30945,31465,31489,29762,30568,29772,29124,27422,25818,23024,22441,21640,20034,18957,19666,19614,20044,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"avg5":[34811,34066,33667,33263,32766,32229,32963,33475,33650,33210,32652,32550,32939,33119,32477,32795,33584,33690,33191,33304,33499,33844,33160,32522,32177,31759,31135,30384,29508,29250,29568,28919,28363,27824,27847,26695,25601,25635,26140,25717,25099,24272,24800,25090,24987,24971,25295,25980,26371,27045,27596,28381]}};
+function ymd(i){var d=new Date(2026,0,2);d.setDate(d.getDate()+i*7);return (d.getMonth()+1)+'/'+d.getDate();}
+const SLAB=Array.from({length:52},(_,i)=> i%4===0? ymd(i):'');
+const YST={avg5:{c:'#2f6fb2',w:2.6,d:[8,4]},'2022':{c:'#6aa84f',w:1.3,d:[5,4]},'2023':{c:'#89b7e0',w:1.3,d:[5,4]},'2024':{c:'#1c3d6e',w:1.3,d:[5,4]},'2025':{c:'#d98b4a',w:1.3,d:[5,4]},'2026':{c:'#e6a100',w:3.4,d:[]}};
+const YLAB={avg5:'5-Year','2022':'2022','2023':'2023','2024':'2024','2025':'2025','2026':'2026'};
+function spag(id,s,legend){
+  const el=document.getElementById(id); if(!el||!window.Chart) return;
+  const order=['avg5','2022','2023','2024','2025','2026'];
+  const ds=order.map(k=>({label:YLAB[k],data:s[k],borderColor:YST[k].c,borderWidth:YST[k].w,borderDash:YST[k].d,
+    pointRadius:k==='2026'?3:0,pointStyle:'rectRot',pointBackgroundColor:YST[k].c,tension:.25,fill:false,spanGaps:false}));
+  new Chart(el,{type:'line',data:{labels:SLAB,datasets:ds},options:{responsive:true,maintainAspectRatio:false,
+    interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:!!legend,position:'bottom',labels:{boxWidth:22,font:{size:11}}}},
+    scales:{y:{grid:{color:'#e8e2d1'},ticks:{font:{size:10},callback:v=>v.toLocaleString()}},
+      x:{grid:{display:false},ticks:{font:{size:9},autoSkip:false,maxRotation:60,minRotation:60,callback:function(v,i){return SLAB[i]||'';}}}}});
+}
+whenChart(()=>{
+  spag('sCrude',SPAG.crude_ex_spr,true);
+  spag('sGas',SPAG.gasoline,false);
+  spag('sDist',SPAG.distillate,false);
+  spag('sCush',SPAG.cushing,false);
+  var wf=document.getElementById('wfChart');
+  if(wf){ new Chart(wf,{type:'bar',data:{labels:['Production','Imports','Transfers','SPR','Refinery','Exports','Net'],
+    datasets:[{data:[[0,95.2],[95.2,132.46],[132.46,137.36],[137.36,142.86],[142.86,23.86],[23.86,-8.33],[-8.33,0]],
+    backgroundColor:['#0f7a52','#0f7a52','#0f7a52','#0f7a52','#c0392b','#c0392b','#c9a94e'],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},
+      tooltip:{callbacks:{label:function(c){var v=c.raw;return (v[1]-v[0]>=0?'+':'')+(v[1]-v[0]).toFixed(2)+' mmbbl';}}}},
+    scales:{y:{grid:{color:'#e8e2d1'},ticks:{font:{size:10}}},x:{grid:{display:false},ticks:{font:{size:10}}}}}); }
+});
+</script>
+</body>
+</html>

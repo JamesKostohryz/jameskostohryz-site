@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="report:title" content="Daily Market Brief">
+<meta name="report:summary" content="Two-layer market: a structurally bearish supply base overlaid with a re-inflating geopolitical risk premium. Price is held up by the premium, not the fundamentals.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oil &amp; Gas Desk — Daily Brief</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: #e9ebee; color: #16202b;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+}
+.wrap { max-width: 940px; margin: 0 auto; background:#fff; box-shadow:0 1px 4px rgba(0,0,0,.09); }
+.pad { padding: 18px 26px 56px; }
+header.jk { background:#123a5e; color:#fff; padding:18px 26px; }
+.brandrow { display:flex; align-items:center; justify-content:space-between; }
+.brand { display:flex; align-items:center; gap:11px; }
+.wordmark { font-size:13px; letter-spacing:.16em; font-weight:600; opacity:.92; }
+.hdate { font-size:12px; opacity:.85; }
+.kicker { font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: #c9a94e; font-weight: 700; margin-top:12px; }
+h1 { font-size: 25px; margin: 3px 0 2px; color: #fff; letter-spacing: -0.01em; }
+.sub { font-size: 11.5px; letter-spacing:.13em; text-transform:uppercase; color: #fff; opacity:.72; }
+.regime {
+  margin: 16px 0; padding: 12px 15px; border-radius: 9px;
+  background: linear-gradient(90deg,#fff4e6,#fdece1); border: 1px solid #f2c79a;
+  font-size: 14px;
+}
+.regime b { color: #9a4a10; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap: 10px; margin: 14px 0 6px; }
+.tile { background:#fff; border:1px solid #e4e7eb; border-radius:10px; padding:12px 13px; }
+.tile .lab { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:#6b7280; font-weight:700; }
+.tile .prx { font-size:11px; color:#9aa1ab; }
+.tile .val { font-size:22px; font-weight:700; margin-top:3px; color:#123a5e; }
+.tile .chg { font-size:13px; font-weight:600; margin-top:1px; }
+.up { color:#0f7a52; } .down { color:#c0392b; } .flat { color:#6b7280; }
+h2 { font-size:15px; text-transform:uppercase; letter-spacing:.06em; color:#123a5e; margin:26px 0 8px; padding-bottom:5px; border-bottom:1px solid #e4e7eb; }
+p { margin:9px 0; font-size:14.5px; }
+ul { margin:8px 0; padding-left:20px; } li { margin:6px 0; font-size:14.5px; }
+.lead { font-weight:600; color:#123a5e; }
+.chartbox { background:#fff; border:1px solid #e4e7eb; border-radius:10px; padding:14px; height:300px; margin-top:8px; }
+.chartcap { font-size:12px; color:#6b7280; margin-top:6px; }
+.watch { background:#eef4fb; border:1px solid #cddffb; border-radius:10px; padding:12px 15px; }
+.watch li { margin:5px 0; }
+.tag { display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:20px; margin-right:6px; }
+.tag.bear { background:#fde8e6; color:#c0392b; } .tag.bull { background:#e3f5ea; color:#0f7a52; } .tag.neu { background:#eceff3; color:#4b5563; }
+.note { font-size:12.5px; color:#7a828c; font-style:italic; }
+footer { margin-top:34px; padding-top:14px; border-top:1px solid #e4e7eb; font-size:12.5px; color:#6b7280; }
+footer a { color:#2563a8; text-decoration:none; }
+.err { color:#c0392b; font-size:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="jk">
+    <div class="brandrow">
+      <div class="brand"><svg width="34" height="34" viewBox="0 0 40 40" aria-label="JK Consulting"><rect width="40" height="40" rx="8" fill="#c9a94e"/><text x="20" y="27" font-size="19" font-weight="700" fill="#123a5e" text-anchor="middle" font-family="Georgia,serif">JK</text></svg><span class="wordmark">JK CONSULTING</span></div>
+      <div class="hdate">Oil &amp; Gas Desk · Daily · Jul 19, 2026</div>
+    </div>
+    <div class="kicker">Oil &amp; Gas Commodity Desk · Daily Brief</div>
+    <h1>Geopolitical premium re-inflates over a bearish base</h1>
+    <div class="sub" id="dateline">Independent · fundamentals-first · pre-market</div>
+  </header>
+  <div class="pad">
+
+  <div class="regime">
+    <b>Regime:</b> Two-layer market — a structurally <b>bearish supply base</b> (record non-OPEC output) overlaid with an <b>acute, re-inflating geopolitical risk premium</b> (Middle East hostilities; Red Sea / Hormuz chokepoint threats). Price is currently held up by the premium, not by fundamentals.
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+  <div class="note" id="tapefoot">Live tiles use ETF proxies (USO≈WTI, BNO≈Brent, UNG≈Henry Hub) — directional, ~15-min delayed. Snapshot shown in static view; refreshes live in the Cowork artifact. Exact futures settlements are pulled from primary sources in the written sections.</div>
+
+  <h2>What's moving &amp; why</h2>
+  <ul>
+    <li><span class="tag bull">SPIKE</span>Crude jumped <b>~14% on the week</b> into mid-July on renewed Middle East hostilities. Brent ~<b>$88</b> / WTI ~<b>$82</b> (7/17), up from ~$72 / ~$69 in early July. Tehran reportedly signaled it could push the Houthis to close the <b>Bab el-Mandeb</b> (Red Sea) if its energy infrastructure is struck — layered on the earlier <b>Strait of Hormuz</b> flashpoint.</li>
+    <li><span class="tag bear">BASE</span>Underneath the premium the balance stays soft: US output tracking a record <b>~13.6 mb/d</b> in 2026, plus Brazil/Guyana/Canada growth, against muted demand. Absent disruption, fundamentals point lower.</li>
+    <li><span class="tag neu">OPEC+</span>On <b>July 5</b>, seven producers agreed to <b>cut 188 kb/d from August</b> — a reversal of the 2026 unwind. The group is turning defensive, signaling discomfort with the demand outlook and a willingness to defend price.</li>
+    <li><span class="tag neu">EQUITIES</span>Energy complex is carrying the bid — E&amp;P (XOP) outperforming the majors (XLE), consistent with a price-driven, not demand-driven, move.</li>
+  </ul>
+
+  <h2>Curve &amp; cracks</h2>
+  <p>The tell to watch is whether tightness is <span class="lead">real or premium</span>. If the front of the Brent/WTI curve stays firmly <b>backwardated</b> and product <b>cracks hold</b> through any de-escalation headline, the fundamental bear case is wrong and the move has legs. If backwardation flattens toward <b>contango</b> and cracks fade as the premium bleeds, downside resumes toward the high-$60s/low-$70s WTI.</p>
+  <p class="note">Live curve (M1–M2, Dec–Dec) and 3-2-1 / distillate crack values are populated from CME/EIA in the automated runs; this inaugural brief frames the read, and the weekly EIA report will set hard baselines.</p>
+
+  <h2>WTI — the spike-and-fade backdrop</h2>
+  <div class="chartbox"><canvas id="wtiChart"></canvas></div>
+  <div class="chartcap">WTI spot (FRED daily, May 19 – Jul 13). Note the ~$112 Hormuz-era spike collapsing to ~$70 as fundamentals reasserted, then the fresh mid-July upturn. FRED lags ~5 sessions — the live tiles above capture the $82–88 print the series hasn't shown yet.</div>
+
+  <h2>Fundamentals on file</h2>
+  <ul>
+    <li><b>EIA week ending 7/10</b> (released 7/15): commercial crude <b>−1.7 mmbbl to 409.7 mmbbl</b>, ~6% below the 5-yr average. Refinery <b>utilization 96.2%</b> with inputs at 17.1 mb/d — strong summer runs. Imports 5.7 mb/d.</li>
+    <li>Draw + high runs is seasonally normal and does not, by itself, contradict the bearish structural view; the surplus risk is a Q4 story as runs ease and non-OPEC barrels land.</li>
+  </ul>
+
+  <h2>Positioning &amp; catalysts</h2>
+  <ul>
+    <li><b>Crowding risk:</b> a fast 14% spike into a headline typically pulls in fresh managed-money length — that makes the tape vulnerable to an air pocket on any credible de-escalation. Confirm with Friday's CFTC COT.</li>
+    <li><b>This week's calendar:</b> API (Tue PM) → <b>EIA Weekly (Wed 10:30 ET)</b> → EIA gas storage (Thu) → Baker Hughes rig count + CFTC COT (Fri). The Wednesday EIA print is the next hard test of the demand read.</li>
+  </ul>
+
+  <h2>Thesis check &amp; conviction</h2>
+  <p><span class="lead">Unchanged, medium conviction:</span> price is being rented by geopolitics, not owned by fundamentals. We fade strength <em>only</em> once curve and cracks confirm the premium is deflating; we do not short a live chokepoint threat. A sustained Bab el-Mandeb/Hormuz disruption is the scenario that would flip the structural view outright — that is a flows question we verify with tanker data, not rhetoric.</p>
+
+  <div class="watch">
+    <b>Watch list — triggers &amp; levels</b>
+    <ul>
+      <li><b>WTI $80</b> — premium pivot; loss of $80 on de-escalation opens $72 then the $69 fundamental floor.</li>
+      <li><b>Brent $90</b> — escalation confirmation; <b>sub-$75</b> = premium gone.</li>
+      <li><b>Curve:</b> prompt spread direction — backwardation deepening (real tightness) vs. flattening (premium fading).</li>
+      <li><b>Flows:</b> actual Red Sea / Hormuz tanker throughput vs. rhetoric (Kpler/Vortexa).</li>
+      <li><b>Wed EIA:</b> Cushing level (squeeze risk) and implied gasoline/distillate demand.</li>
+    </ul>
+  </div>
+
+  <footer>
+    <b>Sources:</b>
+    <a href="https://www.eia.gov/petroleum/supply/weekly/">EIA Weekly Petroleum Status</a> ·
+    <a href="https://www.eia.gov/outlooks/steo/">EIA STEO</a> ·
+    <a href="https://www.aljazeera.com/economy/2026/7/6/opec-countries-say-they-will-expand-monthly-oil-production">OPEC+ (Al Jazeera)</a> ·
+    <a href="https://tradingeconomics.com/commodity/brent-crude-oil">TradingEconomics (Brent/WTI)</a> ·
+    <a href="https://www.cnbc.com/2026/06/07/opec-set-for-fourth-oil-quota-hike-since-strait-of-hormuz-closure.html">CNBC (OPEC+/Hormuz)</a>
+    <br><span class="note">Inaugural sample brief · independent desk, fundamentals-first · not investment advice.</span>
+  </footer>
+  </div><!-- /pad -->
+
+</div>
+
+<script>
+// ---- Live tape via MCP ----
+const LIVE_TOOL = 'mcp__8b10e7f7-6344-45ed-86c2-84475eb96419__get_live_price_data';
+const TILE_DEFS = [
+  { code:'USO.US', lab:'WTI', prx:'via USO' },
+  { code:'BNO.US', lab:'Brent', prx:'via BNO' },
+  { code:'UNG.US', lab:'Nat Gas', prx:'via UNG' },
+  { code:'XLE.US', lab:'Energy (Majors)', prx:'XLE' },
+  { code:'XOP.US', lab:'E&P', prx:'XOP' }
+];
+// Embedded 7/19 snapshot so tiles always render (refreshes live in the Cowork artifact)
+const SNAP = {'USO.US':{close:123.96,change:4.66,change_p:3.91},'BNO.US':{close:48.70,change:1.92,change_p:4.10},'UNG.US':{close:10.51,change:0.09,change_p:0.86},'XLE.US':{close:57.68,change:0.66,change_p:1.16},'XOP.US':{close:170.18,change:3.74,change_p:2.25}};
+function fmt(n){ return (n==null||isNaN(n)) ? '—' : Number(n).toFixed(2); }
+function pct(n){ return (n==null||isNaN(n)) ? '' : (n>=0?'+':'') + Number(n).toFixed(2) + '%'; }
+function render(by, live){
+  const box = document.getElementById('tiles'); box.innerHTML = '';
+  TILE_DEFS.forEach(d => {
+    const o = by[d.code] || {};
+    const chg = o.change_p;
+    const cls = chg>0 ? 'up' : chg<0 ? 'down' : 'flat';
+    const arrow = chg>0 ? '▲' : chg<0 ? '▼' : '·';
+    const el = document.createElement('div'); el.className='tile';
+    el.innerHTML = `<div class="lab">${d.lab}</div><div class="prx">${d.prx}${live?'':' · 7/19 snapshot'}</div>
+      <div class="val">${fmt(o.close)}</div>
+      <div class="chg ${cls}">${arrow} ${fmt(o.change)} (${pct(chg)})</div>`;
+    box.appendChild(el);
+  });
+}
+render(SNAP, false);
+(async () => {
+  try {
+    const r = await window.cowork.callMcpTool(LIVE_TOOL, { ticker:'USO.US', additional_symbols:['BNO.US','UNG.US','XLE.US','XOP.US'] });
+    let payload = r.structuredContent ?? JSON.parse(r.content[0].text);
+    if (payload && payload.result) payload = payload.result;
+    let arr = typeof payload === 'string' ? JSON.parse(payload) : payload;
+    if (Array.isArray(arr)) { const by = {}; arr.forEach(o => by[o.code] = o); render(by, true); }
+  } catch(e){ /* keep snapshot */ }
+})();
+
+// ---- WTI trend chart (static FRED history) ----
+const WTI_D = [
+  ['5/19',112.09],['5/20',101.69],['5/21',100.2],['5/22',100.35],['5/26',97.63],['5/27',92.35],['5/28',92.65],['5/29',91.16],
+  ['6/1',95.96],['6/2',97.47],['6/3',99.76],['6/4',96.83],['6/5',94.32],['6/8',95.0],['6/9',91.9],['6/10',93.68],['6/11',91.58],
+  ['6/12',88.62],['6/15',84.65],['6/16',79.8],['6/17',80.65],['6/18',80.35],['6/22',78.94],['6/23',74.62],['6/24',71.42],
+  ['6/25',72.67],['6/26',70.3],['6/29',71.87],['6/30',70.56],['7/1',69.74],['7/2',69.73],['7/6',69.6],['7/7',71.53],
+  ['7/8',74.56],['7/9',73.15],['7/10',72.45],['7/13',79.2]
+];
+function whenChart(fn){ if(window.Chart){ fn(); } else { setTimeout(function(){ whenChart(fn); }, 60); } }
+whenChart(() => {
+  const ctx = document.getElementById('wtiChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type:'line',
+    data:{ labels: WTI_D.map(d=>d[0]),
+      datasets:[{ label:'WTI spot ($/bbl)', data: WTI_D.map(d=>d[1]),
+        borderColor:'#123a5e', backgroundColor:'rgba(16,36,62,.08)', fill:true,
+        borderWidth:2, tension:.25, pointRadius:0, pointHoverRadius:4 }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ ticks:{ callback:v=>'$'+v }, grid:{ color:'#eef0f3' } },
+               x:{ grid:{ display:false }, ticks:{ maxTicksLimit:9 } } } }
+  });
+});
+</script>
+</body>
+</html>

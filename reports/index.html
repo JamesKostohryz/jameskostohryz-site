@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reports — James A. Kostohryz</title>
+<meta name="description" content="Daily market briefs, weekly reports, and geopolitical desk notes from James A. Kostohryz — independent investment strategist. Free access.">
+<!-- This page is a FIXED shell. It never needs editing to publish a report.
+     It renders reports/reports.json, which build/build_reports.py regenerates
+     from whatever HTML files are present in this folder. -->
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+
+<header class="site-head">
+  <div class="wrap nav">
+    <a class="brand" href="../index.html" aria-label="James A. Kostohryz — home">
+      <svg class="mono" width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="8" fill="#c9a94e"/><text x="20" y="27" font-size="19" font-weight="700" fill="#123a5e" text-anchor="middle" font-family="Georgia,serif">JK</text></svg>
+      <span class="name">James A. Kostohryz<small>Successful Portfolio Strategy</small></span>
+    </a>
+    <button class="nav-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+    <nav class="nav-links">
+      <a href="../index.html" data-nav="home">Home</a>
+      <a href="index.html" class="active" data-nav="reports">Reports</a>
+      <a href="../method.html" data-nav="method">Method</a>
+      <a href="../about.html" data-nav="about">About</a>
+      <a class="nav-cta" href="../contact.html">Work with me</a>
+    </nav>
+  </div>
+</header>
+
+<section class="reports-head">
+  <div class="wrap">
+    <p class="eyebrow">Research library · Free access</p>
+    <h1>Reports</h1>
+    <p class="lede" style="max-width:760px">Daily market briefs, weekly reports, and live geopolitical desk notes — the same work I publish to my subscribers, open here while the audience grows. Newest at the top.</p>
+    <div class="filters" id="filters" hidden>
+      <button class="chip on" data-type="all">All</button>
+    </div>
+  </div>
+</section>
+
+<main class="wrap" style="padding-top:34px;padding-bottom:60px">
+  <div id="feature"></div>
+  <div id="grid" class="rlist"></div>
+  <div id="empty" class="empty" hidden>No reports published yet — check back shortly.</div>
+
+  <!-- Email capture: an OFFER, not a toll. Never gates the free reports. Dismissible. -->
+  <aside class="capture" id="capture" aria-label="Email updates">
+    <button class="dismiss" id="capDismiss" aria-label="Dismiss">×</button>
+    <div>
+      <h3>Get these in your inbox</h3>
+      <p>A note when a new brief or report posts. No spam, unsubscribe anytime. The reports stay free either way.</p>
+    </div>
+    <form id="capForm">
+      <input type="email" id="capEmail" placeholder="you@email.com" aria-label="Email address" required>
+      <button class="btn btn-primary" type="submit">Notify me</button>
+      <div class="ok" id="capOk" hidden>Thanks — you're on the list. ✓</div>
+    </form>
+  </aside>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap foot-grid">
+    <div class="foot-brand">
+      <p class="name">James A. Kostohryz</p>
+      <p>Independent investment strategist &amp; author. Emerging-markets and Latin American equities, banking, and energy.</p>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      <a href="../index.html">Home</a>
+      <a href="index.html">Reports</a>
+      <a href="../method.html">The AEG Method</a>
+      <a href="../about.html">About</a>
+      <a href="../contact.html">Work with me</a>
+    </div>
+    <div>
+      <h4>Elsewhere</h4>
+      <a href="https://seekingalpha.com/author/james-a-kostohryz" rel="me noopener" target="_blank">Seeking Alpha</a>
+      <a href="https://www.youtube.com/@JamesKostohryz" rel="me noopener" target="_blank">YouTube</a>
+      <a href="../contact.html">Contact</a>
+    </div>
+  </div>
+  <div class="wrap foot-bottom">
+    <span>© <span id="yr"></span> James A. Kostohryz</span>
+    <span class="disc">For informational and educational purposes only. Nothing here is investment, legal, or tax advice.</span>
+  </div>
+</footer>
+
+<script src="../assets/site.js"></script>
+<script>
+(function () {
+  var yr = document.getElementById('yr'); if (yr) yr.textContent = new Date().getFullYear();
+
+  var STORE = 'jk_capture_dismissed';
+  var cap = document.getElementById('capture');
+  try { if (localStorage.getItem(STORE) === '1') cap.classList.add('gone'); } catch (e) {}
+  document.getElementById('capDismiss').addEventListener('click', function () {
+    cap.classList.add('gone');
+    try { localStorage.setItem(STORE, '1'); } catch (e) {}
+  });
+  document.getElementById('capForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = document.getElementById('capEmail').value.trim();
+    if (!email) return;
+    // No backend yet: capture is stored client-side and surfaced for wiring to a
+    // list provider (Buttondown / ConvertKit / Mailchimp) later. See README.
+    try {
+      var list = JSON.parse(localStorage.getItem('jk_subscribers') || '[]');
+      list.push({ email: email, at: new Date().toISOString() });
+      localStorage.setItem('jk_subscribers', JSON.stringify(list));
+    } catch (e) {}
+    document.getElementById('capEmail').style.display = 'none';
+    this.querySelector('button[type=submit]').style.display = 'none';
+    document.getElementById('capOk').hidden = false;
+  });
+
+  var TYPE_LABEL = { daily:'Daily', weekly:'Weekly', geo:'Geopolitical', special:'Special', method:'Method' };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+  var all = [], activeType = 'all';
+
+  function render() {
+    var feature = document.getElementById('feature');
+    var grid = document.getElementById('grid');
+    var items = activeType === 'all' ? all : all.filter(function (r) { return r.type_key === activeType; });
+
+    if (!items.length) {
+      feature.innerHTML = ''; grid.innerHTML = '';
+      document.getElementById('empty').hidden = false;
+      return;
+    }
+    document.getElementById('empty').hidden = true;
+
+    var lead = items[0], rest = items.slice(1);
+    feature.innerHTML =
+      '<div class="feature"><a class="card-link" href="' + encodeURI(lead.file) + '">' +
+        '<span class="newest">Latest · ' + esc(lead.type_label) + '</span>' +
+        '<h2>' + esc(lead.title) + '</h2>' +
+        '<div class="meta">' + esc(lead.display_date) + '</div>' +
+        (lead.summary ? '<p class="sum">' + esc(lead.summary) + '</p>' : '') +
+      '</a></div>';
+
+    grid.innerHTML = rest.map(function (r) {
+      return '<a class="rcard" href="' + encodeURI(r.file) + '">' +
+        '<span class="rtype ' + esc(r.css || 'report') + '">' + esc(r.type_label) + '</span>' +
+        '<h3>' + esc(r.title) + '</h3>' +
+        '<div class="rdate">' + esc(r.display_date) + '</div>' +
+        (r.summary ? '<p class="rsum">' + esc(r.summary) + '</p>' : '') +
+        '<span class="rgo">Read →</span>' +
+      '</a>';
+    }).join('');
+  }
+
+  function buildFilters(types) {
+    if (!types || types.length < 2) return;
+    var box = document.getElementById('filters');
+    box.hidden = false;
+    types.forEach(function (t) {
+      var b = document.createElement('button');
+      b.className = 'chip'; b.dataset.type = t.key;
+      b.textContent = t.label || (TYPE_LABEL[t.key] || t.key);
+      box.appendChild(b);
+    });
+    box.addEventListener('click', function (e) {
+      var b = e.target.closest('.chip'); if (!b) return;
+      activeType = b.dataset.type;
+      box.querySelectorAll('.chip').forEach(function (c) { c.classList.toggle('on', c === b); });
+      render();
+    });
+  }
+
+  fetch('reports.json', { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (data) {
+      all = data.reports || [];
+      buildFilters(data.types || []);
+      render();
+    })
+    .catch(function () {
+      document.getElementById('empty').hidden = false;
+      document.getElementById('empty').textContent =
+        'Reports are loading — if this persists, the manifest has not been generated yet.';
+    });
+})();
+</script>
+</body>
+</html>

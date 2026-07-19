@@ -1,0 +1,49 @@
+name: Build & deploy site
+
+# The publishing contract in one workflow:
+#   1. A report is added by dropping an HTML file into /reports (see README).
+#   2. On every push, this job regenerates reports/reports.json from whatever
+#      files are present, then deploys the whole site to GitHub Pages.
+#   3. Nothing is committed back to the repo — no loops, no hand-edited index.
+# Result: publish = generate HTML -> commit to /reports -> push. Done.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Regenerate reports manifest from files present
+        run: python build/build_reports.py
+
+      - uses: actions/configure-pages@v5
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
