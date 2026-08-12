@@ -510,13 +510,22 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     var mv = P.reduce(function (a, p) { return a + p.market_value; }, 0);
     var basis = P.reduce(function (a, p) { return a + p.cost_basis_fifo; }, 0);
 
+    /* Snap the chart's final point to the live NAV. The long-term index
+       (S.curve) only moves when the study is manually re-extended and can
+       otherwise sit a day or more stale against the live book; overwriting
+       just the last value (not the date) keeps the chart's endpoint honest
+       without touching the drawing code's date-indexed layout. */
+    if (S.curve && S.curve.trs && S.curve.trs.length && nav !== null && !isNaN(nav)) {
+      S.curve.trs[S.curve.trs.length - 1] = nav;
+    }
+
     asof(M, P, S);
     kpis(D, nav, cash, cashW, P, mv, basis);
     freshness(P, M, S);
     positions(P, S, mv, basis, cash, cashW, nav);
     allocation(P, S, cash, nav);
     income(I, D, M);
-    book(S);
+    book(D, M, S);
     periods(S);
     curve(S);
     episodes(S);
@@ -718,23 +727,23 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   }
 
   /* --- since inception ----------------------------------------------------
-     Percentages only, deliberately -- matches the approved PDF report's own
-     executive-summary tiles (total return / CAGR / alpha), none of which
-     state a dollar figure either. The long study chains through the real
-     account (2018-2023) and then the model book (2023-present), two
-     different accounts with two different real capitalisations, so there is
-     no single honest dollar figure for "since inception" -- only the current
-     book's own NAV, shown once, above. Putting a second dollar number here
-     is exactly what caused the page to look inconsistent; removing it is
-     the fix, not relabeling it. */
-  function book(S) {
-    var row = S.period_returns.filter(function (p) { return p.period === 'Since inception'; })[0];
-    var tr = row ? row.trs : null;
-    var ann = row ? row.trs_a : null;
-    var alpha = row ? row.trs - row.aor : null;
+     Computed directly from the SAME live NAV shown at the top of the page
+     (D.nav) against a fixed $100,000 at inception (31 Dec 2018) -- not from
+     the separately-maintained long-term index (S.curve), which only moves
+     when someone manually extends the study and can drift out of sync with
+     the live book between updates. Using D.nav here means this section and
+     the top-of-page NAV are structurally the same number and cannot show
+     two different figures again, on this page load or any future one. */
+  var INCEPTION_ISO = '2018-12-31', INCEPTION_BASE = 100000;
+  function book(D, M, S) {
+    var nav = num(D.nav);
+    var tr = (nav === null || isNaN(nav)) ? null : nav / INCEPTION_BASE - 1;
+    var yrs = (Date.now() - d(INCEPTION_ISO)) / (365.25 * 24 * 3600 * 1000);
+    var ann = (tr === null) ? null : Math.pow(1 + tr, 1 / yrs) - 1;
+    var aorRow = S.period_returns.filter(function (p) { return p.period === 'Since inception'; })[0];
+    var alpha = (tr === null || !aorRow) ? null : tr - aorRow.aor;
     var alphaStr = alpha === null || isNaN(alpha) ? '—' :
       (alpha > 0 ? '+' : MINUS) + Math.abs(alpha * 100).toFixed(0) + ' pts';
-    var start = S.curve.dates[0];
     el('bookKpis').innerHTML = [
       ['Total return', signPct(tr), cls(tr), 'capital, dividends and interest'],
       ['Annualized', ann === null ? '—' : signPct(ann) + '/yr', cls(ann), 'compound annual growth rate'],
@@ -745,11 +754,11 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     }).join('');
 
     el('bookNote').innerHTML =
-      'From <b>' + longDate(start) + '</b> through <b>' + longDate(S.series_through) + '</b>, on a ' +
-      'total-return basis (capital, dividends and interest). Through 2023 the series is the real ' +
-      'brokerage account; from November 2023 it chains into the model book — two different accounts ' +
-      'with two different real capitalisations, which is why this section shows percentages only. The ' +
-      'current book’s own dollar net asset value is reported once, above, against the holdings currently open.';
+      'From <b>' + longDate(INCEPTION_ISO) + '</b> through <b>' + longDate(M.ledger_through) + '</b>: a $100,000 ' +
+      'starting balance against the current book&rsquo;s real dollar net asset value, shown once at the top of ' +
+      'this page — the figures above are computed directly from that same number, so they always agree with it. ' +
+      'The pre-2023 portion of this record has not yet been independently audited against the real account&rsquo;s ' +
+      'statements; that review is planned and may revise these figures.';
   }
 
   /* --- period returns ---------------------------------------------------- */
