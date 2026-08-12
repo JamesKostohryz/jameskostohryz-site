@@ -718,35 +718,38 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   }
 
   /* --- since inception ----------------------------------------------------
-     This is the long chained study (the same series behind the "Since
-     inception" row of the period-return table and the long-term chart below),
-     indexed to $100,000 at inception. It is NOT the current book's own dollar
-     NAV — the study chains through the real account (2018-2023) and then the
-     model book (2023-present), each with its own capitalisation, so a real-
-     dollar figure cannot be paired with a since-inception return without
-     mixing two different bases. The indexed value is the only number that
-     reconciles: base x (1 + total return) = indexed value. */
+     Percentages only, deliberately -- matches the approved PDF report's own
+     executive-summary tiles (total return / CAGR / alpha), none of which
+     state a dollar figure either. The long study chains through the real
+     account (2018-2023) and then the model book (2023-present), two
+     different accounts with two different real capitalisations, so there is
+     no single honest dollar figure for "since inception" -- only the current
+     book's own NAV, shown once, above. Putting a second dollar number here
+     is exactly what caused the page to look inconsistent; removing it is
+     the fix, not relabeling it. */
   function book(S) {
     var row = S.period_returns.filter(function (p) { return p.period === 'Since inception'; })[0];
     var tr = row ? row.trs : null;
-    var cap = S.curve.base;
-    var idx = S.curve.trs[S.curve.trs.length - 1];
+    var ann = row ? row.trs_a : null;
+    var alpha = row ? row.trs - row.aor : null;
+    var alphaStr = alpha === null || isNaN(alpha) ? '—' :
+      (alpha > 0 ? '+' : MINUS) + Math.abs(alpha * 100).toFixed(0) + ' pts';
     var start = S.curve.dates[0];
     el('bookKpis').innerHTML = [
       ['Total return', signPct(tr), cls(tr), 'capital, dividends and interest'],
-      ['Initial value', money(cap, 0), '', 'at ' + longDate(start)],
-      ['Net asset value', money(idx, 0), '', 'at ' + longDate(S.series_through)]
+      ['Annualized', ann === null ? '—' : signPct(ann) + '/yr', cls(ann), 'compound annual growth rate'],
+      ['Alpha vs 60/40', alphaStr, cls(alpha), 'cumulative, in points']
     ].map(function (r) {
       return '<div class="kpi"><span class="k">' + esc(r[0]) + '</span><span class="v ' + r[2] + '">' +
              esc(r[1]) + '</span><span class="s">' + esc(r[3]) + '</span></div>';
     }).join('');
 
     el('bookNote').innerHTML =
-      'Net asset value over initial value, from <b>' + longDate(start) + '</b> through <b>' +
-      longDate(S.series_through) + '</b>, on a total-return basis (capital, dividends and interest), ' +
-      'indexed to $100,000 at inception. Through 2023 the series is the real brokerage account; from ' +
-      'November 2023 it chains into the model book. This is the long-term series value, not the current ' +
-      'book’s own dollar figure — which is reported separately, above, against the holdings currently open.';
+      'From <b>' + longDate(start) + '</b> through <b>' + longDate(S.series_through) + '</b>, on a ' +
+      'total-return basis (capital, dividends and interest). Through 2023 the series is the real ' +
+      'brokerage account; from November 2023 it chains into the model book — two different accounts ' +
+      'with two different real capitalisations, which is why this section shows percentages only. The ' +
+      'current book’s own dollar net asset value is reported once, above, against the holdings currently open.';
   }
 
   /* --- period returns ---------------------------------------------------- */
