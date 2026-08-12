@@ -738,32 +738,23 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   }
 
   /* --- period returns ---------------------------------------------------- */
+  /* These figures come from the published study and are shown exactly as it
+     states them. The page does not recompute them. */
   function periods(S) {
-    var drift = false;
     el('perTable').querySelector('tbody').innerHTML = S.period_returns.map(function (p) {
       function c(v) { return '<td class="n ' + cls(v) + '">' + signPct(v) + '</td>'; }
       function a(v) { return '<td class="n">' + (v === null ? '—' : signPct(v)) + '</td>'; }
-      if (p.base !== p.start) drift = true;
-      // The base actually used is shown, not the nominal period boundary.
-      var from = p.base === p.start
-        ? shortDate(p.base)
-        : '<span title="Nearest observation on or before ' + p.start + '">' + shortDate(p.base) + '</span>';
       return '<tr><td class="m">' + esc(p.period) + '</td>' +
-        '<td class="n" style="text-align:left">' + from + '</td>' +
+        '<td class="n" style="text-align:left">' + shortDate(p.start) + '</td>' +
         c(p.trs) + c(p.spy) + c(p.aor) + a(p.trs_a) + a(p.spy_a) + a(p.aor_a) + '</tr>';
     }).join('');
 
     el('perNote').innerHTML =
-      'Cumulative returns, with annualised figures in the right-hand columns for periods of a year or more. ' +
-      'All three series are total return: the portfolio against SPY for the S&amp;P 500 and AOR for a 60/40 mix. ' +
-      'Measured through <b>' + longDate(S.series_through) + '</b> — not through the ledger date at the top of ' +
-      'this page. ' +
-      (drift
-        ? 'The “From” column shows the observation each period is actually measured from, which is the last one ' +
-          'on or before the nominal period boundary; the portfolio and both benchmarks always share that same ' +
-          'base date, so the comparison is like for like. '
-        : '') +
-      'These are the returns of the strategy series, not of the current holdings above.';
+      'Cumulative returns, with annualised figures in the right-hand columns. All three series are total ' +
+      'return: the portfolio against SPY for the S&amp;P 500 and AOR for a 60/40 mix. Measured through <b>' +
+      longDate(S.series_through) + '</b> — not through the ledger date at the top of this page. ' +
+      'These are the returns of the strategy series, not of the current holdings above. ' +
+      'This table is the reference for period returns; the chart below is a picture of the same series.';
   }
 
   /* --- the curve ---------------------------------------------------------
@@ -950,9 +941,10 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     });
 
     el('curveNote').innerHTML =
-      'All three lines are rebased to 100 at the base date of the window shown — currently <b>' +
-      longDate(dates[0]) + '</b> — so they can be read against each other directly. Those base dates are the ' +
-      'same ones used by the period-return table above, so the two always agree. ' +
+      'All three lines are rebased to 100 at <b>' + longDate(dates[0]) + '</b>, the first observation in the ' +
+      'window shown, so they can be read against each other directly. The percentages in the line below the ' +
+      'chart are measured from that observation. For period returns use the table above — it is the reference, ' +
+      'and it is measured from the period boundary rather than from the nearest observation to it. ' +
       (CUR.log ? 'The vertical axis is logarithmic, so equal vertical distances are equal percentage moves. ' : '') +
       (showModel
         ? 'The gold dashed line marks <b>' + longDate(c.model_start_date) + '</b>, where the record moves from ' +
