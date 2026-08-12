@@ -229,11 +229,18 @@
     <h3 style="margin-top:2em">Period returns</h3>
     <div class="table-wrap">
       <table class="dtable" id="perTable" style="min-width:600px">
-        <thead><tr>
-          <th>Period</th><th>From</th>
-          <th class="n">Portfolio</th><th class="n">S&amp;P 500</th><th class="n">60 / 40</th>
-          <th class="n">Portfolio p.a.</th><th class="n">S&amp;P 500 p.a.</th><th class="n">60 / 40 p.a.</th>
-        </tr></thead>
+        <thead>
+          <tr>
+            <th rowspan="2" style="border-bottom:1px solid var(--line)">Period</th>
+            <th rowspan="2" style="border-bottom:1px solid var(--line)">From</th>
+            <th class="n" colspan="3" style="text-align:center;border-bottom:1px solid var(--line);color:var(--ink)">Total return</th>
+            <th class="n" colspan="3" style="text-align:center;border-bottom:1px solid var(--line);color:var(--ink)">Annualized</th>
+          </tr>
+          <tr>
+            <th class="n">Portfolio</th><th class="n">S&amp;P 500</th><th class="n">60 / 40</th>
+            <th class="n">Portfolio</th><th class="n">S&amp;P 500</th><th class="n">60 / 40</th>
+          </tr>
+        </thead>
         <tbody></tbody>
       </table>
     </div>
@@ -1071,7 +1078,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   function prov(M, S) {
     el('provText').innerHTML =
       'Holdings, transactions and income: published record through <b>' + longDate(M.ledger_through) + '</b>, ' +
-      M.transaction_count + ' transactions, cost basis ' + M.cost_basis_method +
+      'cost basis ' + M.cost_basis_method +
       ', excluding ' + esc(M.excludes || '') + '. ' +
       'Long-term series, period returns, decline episodes and risk statistics: through <b>' +
       longDate(S.series_through) + '</b>. ' +
