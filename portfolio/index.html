@@ -728,19 +728,18 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     el('bookKpis').innerHTML = [
       ['Total return', signPct(tr), cls(tr), 'capital, dividends and interest'],
       ['Initial value', money(cap, 0), '', 'at ' + longDate(start)],
-      ['Indexed value', money(idx, 0), '', 'at ' + longDate(S.series_through)]
+      ['Net asset value', money(idx, 0), '', 'at ' + longDate(S.series_through)]
     ].map(function (r) {
       return '<div class="kpi"><span class="k">' + esc(r[0]) + '</span><span class="v ' + r[2] + '">' +
              esc(r[1]) + '</span><span class="s">' + esc(r[3]) + '</span></div>';
     }).join('');
 
     el('bookNote').innerHTML =
-      'Indexed value over initial value, from <b>' + longDate(start) + '</b> through <b>' +
+      'Net asset value over initial value, from <b>' + longDate(start) + '</b> through <b>' +
       longDate(S.series_through) + '</b>, on a total-return basis (capital, dividends and interest), ' +
       'indexed to $100,000 at inception. Through 2023 the series is the real brokerage account; from ' +
-      'November 2023 it chains into the model book. Because the two eras carry different real-dollar ' +
-      'capitalisations, this figure is shown as an index rather than as the current book’s own dollar ' +
-      'net asset value — which is reported separately, above, against the holdings currently open.';
+      'November 2023 it chains into the model book. This is the long-term series value, not the current ' +
+      'book’s own dollar figure — which is reported separately, above, against the holdings currently open.';
   }
 
   /* --- period returns ---------------------------------------------------- */
