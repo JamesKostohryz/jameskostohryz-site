@@ -222,7 +222,7 @@
 <section class="band">
   <div class="wrap section">
     <h2 style="margin-top:0">Performance</h2>
-    <h3 id="bookHead" style="margin-top:.6em">The model book</h3>
+    <h3 id="bookHead" style="margin-top:.6em">Since inception</h3>
     <div class="kpis three" id="bookKpis"></div>
     <p class="sect-note" id="bookNote"></p>
 
@@ -509,7 +509,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     positions(P, S, mv, basis, cash, cashW, nav);
     allocation(P, S, cash, nav);
     income(I, D, M);
-    book(D, M);
+    book(S);
     periods(S);
     curve(S);
     episodes(S);
@@ -710,31 +710,37 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     el('incNote').innerHTML = note;
   }
 
-  /* --- the model book ----------------------------------------------------
-     This is a DIFFERENT measurement from the period-return table below it,
-     and the page says so rather than letting a reader assume otherwise:
-     different start date, different base, different as-of date. It is capital
-     plus income against the capital the book started with. */
-  function book(D, M) {
-    var cap = num(D.initial_capital), nav = num(D.nav), tr = num(D.total_return_incl_income);
+  /* --- since inception ----------------------------------------------------
+     This is the long chained study (the same series behind the "Since
+     inception" row of the period-return table and the long-term chart below),
+     indexed to $100,000 at inception. It is NOT the current book's own dollar
+     NAV — the study chains through the real account (2018-2023) and then the
+     model book (2023-present), each with its own capitalisation, so a real-
+     dollar figure cannot be paired with a since-inception return without
+     mixing two different bases. The indexed value is the only number that
+     reconciles: base x (1 + total return) = indexed value. */
+  function book(S) {
+    var row = S.period_returns.filter(function (p) { return p.period === 'Since inception'; })[0];
+    var tr = row ? row.trs : null;
+    var cap = S.curve.base;
+    var idx = S.curve.trs[S.curve.trs.length - 1];
+    var start = S.curve.dates[0];
     el('bookKpis').innerHTML = [
-      ['Total return', signPct(tr), cls(tr), 'capital and income'],
-      ['Initial capital', money(cap, 0), '', 'at ' + longDate(D.inception)],
-      ['Net asset value', money(nav, 0), '', 'at ' + longDate(M.ledger_through)]
+      ['Total return', signPct(tr), cls(tr), 'capital, dividends and interest'],
+      ['Initial value', money(cap, 0), '', 'at ' + longDate(start)],
+      ['Indexed value', money(idx, 0), '', 'at ' + longDate(S.series_through)]
     ].map(function (r) {
       return '<div class="kpi"><span class="k">' + esc(r[0]) + '</span><span class="v ' + r[2] + '">' +
              esc(r[1]) + '</span><span class="s">' + esc(r[3]) + '</span></div>';
     }).join('');
 
     el('bookNote').innerHTML =
-      'Net asset value over initial capital, from <b>' + longDate(D.inception) + '</b> through <b>' +
-      longDate(M.ledger_through) + '</b>. It counts realised gains, unrealised gains and income together, ' +
-      'so it is not the unrealised figure shown against current holdings above, and it is not the ' +
-      '“since inception” row of the table below — that row measures a longer series from a different ' +
-      'start date. The book is funded once and never again: net asset value reconciles exactly to ' +
-      'initial capital plus trade cash flows plus dividends received. Deposits and withdrawals in the ' +
-      'underlying account are excluded by construction, as options and margin interest are, so no ' +
-      'external cash flow flatters or penalises this figure.';
+      'Indexed value over initial value, from <b>' + longDate(start) + '</b> through <b>' +
+      longDate(S.series_through) + '</b>, on a total-return basis (capital, dividends and interest), ' +
+      'indexed to $100,000 at inception. Through 2023 the series is the real brokerage account; from ' +
+      'November 2023 it chains into the model book. Because the two eras carry different real-dollar ' +
+      'capitalisations, this figure is shown as an index rather than as the current book’s own dollar ' +
+      'net asset value — which is reported separately, above, against the holdings currently open.';
   }
 
   /* --- period returns ---------------------------------------------------- */
