@@ -140,12 +140,6 @@
     <p class="eyebrow">Total Return Strategy · Model Portfolio</p>
     <h1 style="margin-bottom:.25em">Model Portfolio</h1>
     <p class="lede" style="max-width:820px">Holdings, allocation, income and performance data, read directly from the portfolio's published record.</p>
-    <div class="pf-asof" id="asofStrip" hidden>
-      <span>Ledger through <b id="asofLedger">—</b></span>
-      <span>Prices as of <b id="asofPrice">—</b> <span id="asofPriceAge" class="muted"></span></span>
-      <span>Transactions <b id="asofTx">—</b></span>
-      <span>Cost basis <b id="asofBasis">—</b></span>
-    </div>
   </div>
 </section>
 
@@ -164,7 +158,6 @@
 <section class="section" style="padding-top:30px">
   <div class="wrap">
     <div class="kpis" id="kpis"></div>
-    <div id="freshness"></div>
 
     <h2>Positions</h2>
     <div class="table-wrap">
@@ -177,11 +170,6 @@
         <tbody></tbody>
       </table>
     </div>
-    <p class="sect-note">
-      Cost basis is FIFO — the same method the broker reports as Price Paid; average cost is never used.
-      Allocation is the position's share of net asset value, so the position rows and cash together total 100%.
-      The portfolio holds no options; options and margin interest are excluded by construction.
-    </p>
   </div>
 </section>
 
@@ -194,11 +182,15 @@
       <div class="alloc"><h3>By region</h3><div id="allocRegion"></div></div>
       <div class="alloc"><h3>By theme</h3><div id="allocTheme"></div></div>
     </div>
-    <p class="sect-note" id="allocNote"></p>
   </div>
 </section>
 
-<!-- ============================ 3. INCOME ============================ -->
+<!-- ============================ 3. INCOME ============================
+     Held in reserve per James (2026-08-12): this section's income figures
+     only cover the model book (from Dec 2023), and pre-2023 income data
+     exists but isn't included yet. Not shown publicly until that's fixed.
+     The income() function below is left intact and unused so this can be
+     restored by uncommenting once the full history is in.
 <section class="section">
   <div class="wrap">
     <h2 style="margin-top:0">Income</h2>
@@ -214,9 +206,9 @@
         </div>
       </div>
     </div>
-    <p class="sect-note" id="incNote"></p>
   </div>
 </section>
+-->
 
 <!-- ============================ 4. PERIOD RETURNS ============================ -->
 <section class="band">
@@ -224,7 +216,6 @@
     <h2 style="margin-top:0">Performance</h2>
     <h3 id="bookHead" style="margin-top:.6em">Since inception</h3>
     <div class="kpis three" id="bookKpis"></div>
-    <p class="sect-note" id="bookNote"></p>
 
     <h3 style="margin-top:2em">Period returns</h3>
     <div class="table-wrap">
@@ -244,7 +235,6 @@
         <tbody></tbody>
       </table>
     </div>
-    <p class="sect-note" id="perNote"></p>
   </div>
 </section>
 
@@ -268,7 +258,6 @@
       </div>
       <p class="readout" id="curveRead"></p>
     </div>
-    <p class="sect-note" id="curveNote"></p>
 
     <h2>Decline episodes</h2>
     <div class="table-wrap">
@@ -281,7 +270,6 @@
         <tbody></tbody>
       </table>
     </div>
-    <p class="sect-note" id="epNote"></p>
 
     <h2>Risk statistics</h2>
     <div class="table-wrap">
@@ -290,7 +278,6 @@
         <tbody></tbody>
       </table>
     </div>
-    <p class="sect-note" id="riskNote"></p>
 
     <h2>Closed positions</h2>
     <div class="chart-ctl" style="margin-bottom:8px">
@@ -306,20 +293,6 @@
         <div class="table-wrap" style="margin-top:0"><table class="dtable tradeT" id="worstT" style="min-width:0">
           <thead><tr><th>Ticker</th><th>Held</th><th class="n">Total return</th><th class="n">Loss</th></tr></thead><tbody></tbody></table></div>
       </div>
-    </div>
-    <p class="sect-note" id="tradeNote"></p>
-  </div>
-</section>
-
-<!-- ============================ PROVENANCE ============================ -->
-<section class="band">
-  <div class="wrap section">
-    <h2 style="margin-top:0">Where these numbers come from</h2>
-    <div class="prose">
-      <p>Every figure on this page is read at load time from a published, machine-readable record —
-         the same files that drive the portfolio spreadsheet subscribers already use. Nothing on this
-         page is typed in by hand, so there is no version of it that can drift out of step with the record.</p>
-      <p id="provText" class="muted" style="font-size:14.5px"></p>
     </div>
   </div>
 </section>
@@ -519,19 +492,15 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       S.curve.trs[S.curve.trs.length - 1] = nav;
     }
 
-    asof(M, P, S);
     kpis(D, nav, cash, cashW, P, mv, basis);
-    freshness(P, M, S);
     positions(P, S, mv, basis, cash, cashW, nav);
     allocation(P, S, cash, nav);
-    income(I, D, M);
     book(D, M, S);
     periods(S);
     curve(S);
     episodes(S);
     risk(S);
     trades(S);
-    prov(M, S);
   }
 
   /* --- as-of strip ------------------------------------------------------- */
@@ -663,17 +632,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     el('allocRegion').innerHTML = bars(group('region'));
     el('allocTheme').innerHTML = bars(group('theme'));
 
-    var lv = Object.keys(S.reference || {}).filter(function (t) { return S.reference[t].leveraged; });
-    var byTicker = {}; P.forEach(function (p) { byTicker[p.ticker] = p; });
-    var levTxt = lv.length
-      ? 'Leverage is carried as a flag and a factor, not as a sector, so the sector split stays comparable over time. ' +
-        'Currently leveraged: ' + lv.map(function (t) {
-          return t + ' at ' + S.reference[t].leverage_factor + '&times; (' +
-                 pct(byTicker[t] ? byTicker[t].weight : 0) + ' of NAV)';
-        }).join(', ') + '. Weights are stated at market value and are not adjusted for that leverage.'
-      : 'No leveraged holdings.';
-    el('allocNote').innerHTML =
-      'Percentages are shares of net asset value, so cash is included and each column totals 100%. ' + levTxt;
   }
 
   /* --- income ------------------------------------------------------------ */
@@ -752,10 +710,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       return '<div class="kpi"><span class="k">' + esc(r[0]) + '</span><span class="v ' + r[2] + '">' +
              esc(r[1]) + '</span><span class="s">' + esc(r[3]) + '</span></div>';
     }).join('');
-
-    el('bookNote').innerHTML =
-      'From <b>' + longDate(INCEPTION_ISO) + '</b> through <b>' + longDate(M.ledger_through) + '</b>, on a ' +
-      'total-return basis (capital, dividends and interest), indexed to a $100,000 starting balance.';
   }
 
   /* --- period returns ---------------------------------------------------- */
@@ -769,13 +723,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
         '<td class="n" style="text-align:left">' + shortDate(p.start) + '</td>' +
         c(p.trs) + c(p.spy) + c(p.aor) + a(p.trs_a) + a(p.spy_a) + a(p.aor_a) + '</tr>';
     }).join('');
-
-    el('perNote').innerHTML =
-      'Cumulative returns, with annualised figures in the right-hand columns. All three series are total ' +
-      'return: the portfolio against SPY for the S&amp;P 500 and AOR for a 60/40 mix. Measured through <b>' +
-      longDate(S.series_through) + '</b> — not through the ledger date at the top of this page. ' +
-      'These are the returns of the strategy series, not of the current holdings above. ' +
-      'This table is the reference for period returns; the chart below is a picture of the same series.';
   }
 
   /* --- the curve ---------------------------------------------------------
@@ -961,26 +908,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       return shortDate(g.from) + ' to ' + shortDate(g.to);
     });
 
-    el('curveNote').innerHTML =
-      'All three lines are rebased to 100 at <b>' + longDate(dates[0]) + '</b>, the first observation in the ' +
-      'window shown, so they can be read against each other directly. The percentages in the line below the ' +
-      'chart are measured from that observation. For period returns use the table above — it is the reference, ' +
-      'and it is measured from the period boundary rather than from the nearest observation to it. ' +
-      (CUR.log ? 'The vertical axis is logarithmic, so equal vertical distances are equal percentage moves. ' : '') +
-      (showModel
-        ? 'The gold dashed line marks <b>' + longDate(c.model_start_date) + '</b>, where the record moves from ' +
-          'the underlying account to the model book. '
-        : 'This window falls entirely within the model book, which begins ' + longDate(c.model_start_date) + '. ') +
-      (d(c.income_start_date) > t0
-        ? 'Dividend income enters the series from <b>' + longDate(c.income_start_date) +
-          '</b>; before that date the series reflects price only. '
-        : '') +
-      (res ? '<br><br>This series is not sampled at one frequency throughout — it runs ' + res + '. ' +
-             'Where it is monthly or weekly, a move that begins and ends between two observations will not ' +
-             'appear in the line' +
-             (gaps.length ? ', and there is no observation at all between ' + gaps.join(' or ') + '' : '') +
-             '. The decline-episode table below is measured on exact peak and trough dates and is unaffected. ' : '') +
-      'Series through <b>' + longDate(S.series_through) + '</b>.';
   }
 
   /* --- decline episodes -------------------------------------------------- */
@@ -999,15 +926,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
         '<td class="n" style="text-align:left">' + shortDate(e.trough) + '</td>' +
         c(e.spy) + c(e.aor) + c(e.trs) + c(e.vs_spy) + c(e.vs_aor) + '</tr>';
     }).join('');
-
-    el('epNote').innerHTML =
-      'Each row is a peak-to-trough decline in the S&amp;P 500 of roughly 10% or more, measured over the exact ' +
-      'peak and trough dates shown. The portfolio column is that same window, not its own drawdown. ' +
-      (missing
-        ? '<b>' + missing + ' episode' + (missing === 1 ? ' predates' : 's predate') + ' the available position ' +
-          'data and is shown as “no data” rather than estimated.</b> '
-        : '') +
-      'Series through ' + longDate(S.series_through) + '.';
   }
 
   /* --- risk statistics --------------------------------------------------- */
@@ -1034,12 +952,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       return '<tr><td class="m">' + r[0].replace('&', '&amp;') + '</td>' + v(r[1]) + v(r[2]) + v(r[3]) + '</tr>';
     }).join('');
 
-    el('riskNote').innerHTML =
-      'Computed over ' + (m.yrs ? m.yrs.toFixed(1) : '—') + ' years of daily data ending ' +
-      longDate(S.series_through) + ', against a risk-free rate of ' + pct(m.rf) + '. ' +
-      'Sharpe and Sortino are different statistics — Sortino penalises downside deviation only — and are ' +
-      'reported separately rather than as one risk-adjusted number. Value at risk is stated as a positive ' +
-      'magnitude of loss. Beta is measured against the S&amp;P 500, which is why its own beta reads 1.00.';
   }
 
   /* --- closed positions -------------------------------------------------- */
@@ -1073,17 +985,9 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     el('bestT').querySelector('tbody').innerHTML = tbl(list.slice(0, 10));
     el('worstT').querySelector('tbody').innerHTML = tbl(list.slice(-10).reverse());
     el('tradeCount').textContent = list.length + ' closed positions in this set';
-    el('tradeNote').innerHTML =
-      'Round trips only — a position is listed once it has been fully closed, so current holdings do not appear ' +
-      'here. Return is total return: realised gain or loss plus dividends received while the position was held, ' +
-      'over cost. Positions with less than $1,000 of cost are excluded, as are short positions. ' +
-      '<b>“Model book”</b> covers positions closed from ' + longDate(S.curve.model_start_date) + ' onward. ' +
-      '<b>“Include earlier account”</b> adds round trips from the underlying account that predate the model book; ' +
-      'those are marked <span class="lev" style="color:#4b5563;background:#eceff3">prior</span>. ' +
-      'Ranking is by percentage return, which favours smaller positions — the dollar column is there to show size.';
   }
 
-  /* --- provenance -------------------------------------------------------- */
+  /* --- provenance (unused; kept for reference, not called from render()) -- */
   function prov(M, S) {
     el('provText').innerHTML =
       'Holdings, transactions and income: published record through <b>' + longDate(M.ledger_through) + '</b>, ' +
