@@ -277,7 +277,6 @@
 
     <h2>Closed positions</h2>
     <div class="chart-ctl" style="margin-bottom:8px">
-      <div class="grp" id="tradeBtns"></div>
       <div class="grp"><span class="muted" style="font-size:12.5px" id="tradeCount"></span></div>
     </div>
     <div class="allocs two">
@@ -940,36 +939,19 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   }
 
   /* --- closed positions -------------------------------------------------- */
-  var TR = { book: 'model', S: null };
   function trades(S) {
-    TR.S = S;
-    el('tradeBtns').innerHTML =
-      '<button class="tabbtn on" data-b="model" type="button">Model book</button>' +
-      '<button class="tabbtn" data-b="all" type="button">Include earlier account</button>';
-    el('tradeBtns').addEventListener('click', function (e) {
-      var b = e.target.closest('button'); if (!b) return;
-      TR.book = b.dataset.b;
-      [].forEach.call(this.querySelectorAll('button'), function (x) { x.classList.toggle('on', x === b); });
-      drawTrades();
-    });
-    drawTrades();
-  }
-  function drawTrades() {
-    var S = TR.S;
-    var list = S.trades.filter(function (t) { return TR.book === 'all' || t.book === 'model'; });
-    function tbl(rows, gainCol) {
+    var list = S.trades;
+    function tbl(rows) {
       return rows.map(function (t) {
-        return '<tr><td class="tk">' + esc(t.ticker) +
-          (TR.book === 'all' && t.book === 'real' ? '<span class="lev" style="color:#4b5563;background:#eceff3">prior</span>' : '') +
-          '</td>' +
+        return '<tr><td class="tk">' + esc(t.ticker) + '</td>' +
           '<td class="n" style="text-align:left">' + shortDate(t.entry) + ' – ' + shortDate(t.exit) + '</td>' +
           '<td class="n ' + cls(t.total_pct) + '">' + signPct(t.total_pct) + '</td>' +
           '<td class="n ' + cls(t.total_pnl) + '">' + signMoney(t.total_pnl) + '</td></tr>';
-      }).join('') || '<tr><td colspan="4" class="muted">No closed positions in this set.</td></tr>';
+      }).join('') || '<tr><td colspan="4" class="muted">No closed positions.</td></tr>';
     }
     el('bestT').querySelector('tbody').innerHTML = tbl(list.slice(0, 10));
     el('worstT').querySelector('tbody').innerHTML = tbl(list.slice(-10).reverse());
-    el('tradeCount').textContent = list.length + ' closed positions in this set';
+    el('tradeCount').textContent = list.length + ' closed positions';
   }
 
   /* --- provenance (unused; kept for reference, not called from render()) -- */
