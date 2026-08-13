@@ -146,10 +146,7 @@
 <div class="wrap">
   <!-- Load / failure states. On any failure this page shows NOTHING numeric. -->
   <div id="loading" class="skel">Loading the published record…</div>
-  <div id="fatal" class="notice err" hidden>
-    <b>The data could not be loaded.</b>
-    <span id="fatalMsg"></span> Rather than show figures that might be out of date, this page shows none.
-  </div>
+  <div id="fatal" hidden><span id="fatalMsg" hidden></span></div>
 </div>
 
 <main id="main" hidden>
@@ -254,7 +251,6 @@
         <span><i style="background:#123a5e"></i>Portfolio</span>
         <span><i style="background:#c0392b"></i>S&amp;P 500 (SPY, total return)</span>
         <span><i style="background:#8b96a2"></i>60 / 40 (AOR, total return)</span>
-        <span id="legModel" hidden><i style="background:#c9a94e;height:0;border-top:2px dashed #c9a94e"></i>Model book begins</span>
       </div>
       <p class="readout" id="curveRead"></p>
     </div>
@@ -527,8 +523,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       ['Securities', money(mv, 0), '', pct(1 - cashW) + ' of NAV'],
       ['Cash', money(cash, 0), '', pct(cashW) + ' of NAV'],
       ['Positions', String(P.length), '', 'excludes cash'],
-      ['Unrealized gain / loss', signMoney(unreal), cls(unreal), 'on current holdings'],
-      ['Income to date', money(num(D.total_income_to_date), 0), '', 'all positions ever held']
+      ['Unrealized gain / loss', signMoney(unreal), cls(unreal), 'on current holdings']
     ];
     el('kpis').innerHTML = rows.map(function (r) {
       return '<div class="kpi"><span class="k">' + esc(r[0]) + '</span>' +
@@ -849,16 +844,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       g += '<text x="' + xAt(t[0]).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="11" fill="#8b96a2" font-family="-apple-system,Segoe UI,Roboto,sans-serif">' + t[1] + '</text>';
     });
 
-    // Provenance marker: where the model book takes over from the real account.
-    // The legend entry follows the marker — it is hidden when the selected
-    // window does not contain that date, so the key never describes an absent line.
-    var showModel = d(c.model_start_date) > t0 && d(c.model_start_date) < t1;
-    el('legModel').hidden = !showModel;
-    if (showModel) {
-      var mx = xAt(d(c.model_start_date)).toFixed(1);
-      g += '<line x1="' + mx + '" y1="' + mT + '" x2="' + mx + '" y2="' + (mT + ph) + '" stroke="' + GOLD + '" stroke-width="1.5" stroke-dasharray="5 4"/>';
-    }
-
     sets.forEach(function (s) {
       var pts = s.r.map(function (v, i) { return x(i).toFixed(1) + ',' + y(v).toFixed(1); }).join(' ');
       g += '<polyline fill="none" stroke="' + s.color + '" stroke-width="' + s.w + '" stroke-linejoin="round" stroke-linecap="round" points="' + pts + '"/>';
@@ -912,9 +897,9 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 
   /* --- decline episodes -------------------------------------------------- */
   function episodes(S) {
-    var missing = 0;
-    el('epTable').querySelector('tbody').innerHTML = S.episodes.map(function (e) {
-      if (e.trs === null) missing++;
+    el('epTable').querySelector('tbody').innerHTML = S.episodes.filter(function (e) {
+      return e.trs !== null;
+    }).map(function (e) {
       function c(v) {
         return v === null
           ? '<td class="n muted" title="No position data for this window">no data</td>'
