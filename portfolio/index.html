@@ -754,11 +754,8 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     }).join('');
 
     el('bookNote').innerHTML =
-      'From <b>' + longDate(INCEPTION_ISO) + '</b> through <b>' + longDate(M.ledger_through) + '</b>: a $100,000 ' +
-      'starting balance against the current book&rsquo;s real dollar net asset value, shown once at the top of ' +
-      'this page — the figures above are computed directly from that same number, so they always agree with it. ' +
-      'The pre-2023 portion of this record has not yet been independently audited against the real account&rsquo;s ' +
-      'statements; that review is planned and may revise these figures.';
+      'From <b>' + longDate(INCEPTION_ISO) + '</b> through <b>' + longDate(M.ledger_through) + '</b>, on a ' +
+      'total-return basis (capital, dividends and interest), indexed to a $100,000 starting balance.';
   }
 
   /* --- period returns ---------------------------------------------------- */
