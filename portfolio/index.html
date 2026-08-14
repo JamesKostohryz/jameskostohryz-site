@@ -68,6 +68,7 @@
   .dtable tbody tr.tot{background:#fff;border-top:2px solid var(--navy)}
   .dtable tbody tr.tot td{font-weight:700;color:var(--navy-deep);border-bottom:0}
   .up{color:var(--up)} .down{color:var(--down)}
+  .outperform{background:#e3f3ea;color:var(--up);font-weight:700;border-radius:3px}
   .lev{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#7a2718;background:#fbe3dd;border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:middle}
   .cashrow td{background:#f2f6fa!important;font-style:italic;color:var(--muted)}
 
@@ -292,7 +293,7 @@
       <p class="readout" id="curveRead"></p>
     </div>
 
-    <h2>Decline episodes</h2>
+    <h2>Risk Management: Performance During Major Declines</h2>
     <div class="table-wrap">
       <table class="dtable" id="epTable" style="min-width:640px">
         <thead><tr>
@@ -303,6 +304,7 @@
         <tbody></tbody>
       </table>
     </div>
+    <p class="sect-note" id="epNote">* Rounds up to 10%.</p>
 
     <h2>Risk statistics</h2>
     <div class="table-wrap">
@@ -969,34 +971,48 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 
   /* --- decline episodes -------------------------------------------------- */
   function episodes(S) {
-    el('epTable').querySelector('tbody').innerHTML = S.episodes.filter(function (e) {
-      return e.trs !== null;
-    }).map(function (e) {
+    var rows = S.episodes.filter(function (e) { return e.trs !== null; });
+    el('epTable').querySelector('tbody').innerHTML = rows.map(function (e) {
       function c(v) {
         return v === null
           ? '<td class="n muted" title="No position data for this window">no data</td>'
           : '<td class="n ' + cls(v) + '">' + signPct(v) + '</td>';
       }
+      // vs-benchmark columns get a stronger green highlight (not just green
+      // text) when the portfolio outperformed - that's the point of this
+      // section, per James.
+      function out(v) {
+        if (v === null) return '<td class="n muted" title="No position data for this window">no data</td>';
+        return '<td class="n ' + cls(v) + (v > 0 ? ' outperform' : '') + '">' + signPct(v) + '</td>';
+      }
+      var spyCell = '<td class="n ' + cls(e.spy) + '">' + signPct(e.spy) + (e.approx ? '*' : '') + '</td>';
       return '<tr><td class="m">' + esc(e.name) +
         (e.kind === 'bear' ? '<span class="lev" style="color:#7a2718;background:#fbe3dd">bear</span>' : '') + '</td>' +
         '<td class="n" style="text-align:left">' + shortDate(e.peak) + '</td>' +
         '<td class="n" style="text-align:left">' + shortDate(e.trough) + '</td>' +
-        c(e.spy) + c(e.aor) + c(e.trs) + c(e.vs_spy) + c(e.vs_aor) + '</tr>';
+        spyCell + c(e.aor) + c(e.trs) + out(e.vs_spy) + out(e.vs_aor) + '</tr>';
     }).join('');
+    el('epNote').hidden = !rows.some(function (e) { return e.approx; });
   }
 
   /* --- risk statistics --------------------------------------------------- */
   function risk(S) {
     var m = S.risk;
-    // sharpe and sortino are DIFFERENT statistics and are never merged.
+    // Sharpe dropped per James (Sortino only). "Value at risk" is now the
+    // median across each calendar year's own VaR, not one figure pooled
+    // across the whole (mixed daily/weekly/monthly) sample. "Annualised
+    // volatility" is now the downside semi-deviation - the same dispersion
+    // figure Sortino itself is already built on - not standard deviation
+    // across all returns. Downside beta is new: beta computed only over
+    // periods the S&P itself was down.
     var rows = [
       ['Compound annual growth rate', m.cagr, m.s_cagr, m.b_cagr, 'pct'],
-      ['Annualised volatility', m.vol, m.svol, m.b_vol, 'pct'],
+      ['Annualised downside semi-deviation', m.dd, m.s_dd, m.b_dd, 'pct'],
       ['Maximum drawdown', m.mdd, m.smdd, m.b_mdd, 'pct'],
-      ['Value at risk', m.var, m.s_var, m.b_var, 'pct'],
-      ['Sharpe ratio', m.sharpe, m.s_sharpe, m.b_sharpe, 'num'],
+      ['Median annual value at risk', m.avar_med, m.s_avar_med, m.b_avar_med, 'pct'],
       ['Sortino ratio', m.sortino, m.s_sortino, m.b_sortino, 'num'],
-      ['Beta to the S&P 500', m.beta, 1, m.b_beta, 'num']
+      ['Beta to the S&P 500', m.beta, 1, m.b_beta, 'num'],
+      ['Downside beta to the S&P 500', m.dbeta, 1, m.b_dbeta, 'num']
     ];
     el('riskTable').querySelector('tbody').innerHTML = rows.map(function (r) {
       function v(x) {
