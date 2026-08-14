@@ -50,9 +50,23 @@
   .notice.err{background:#fdece9;border:1px solid #f2c9c1;border-left:4px solid var(--down);color:#7a2718}
   .notice.info{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--navy);color:#40505f}
   .notice code{background:rgba(0,0,0,.05);padding:1px 5px;border-radius:4px;font-size:12.5px}
+  .errdetail{display:block;margin-top:8px;font-size:12px;color:#9c6055;font-family:ui-monospace,Menlo,Consolas,monospace}
+
+  /* benchmark-role explainer: the three benchmarks do three different jobs and
+     the page says which is which, in the prospectus's own terms. */
+  .bmk{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;margin:6px 0 4px}
+  .bmk > div{padding:17px 18px;border-left:1px solid var(--line)}
+  .bmk > div:first-child{border-left:0}
+  .bmk .role{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-deep);font-weight:700;display:block;margin-bottom:6px}
+  .bmk .what{font-family:var(--serif);font-size:16.5px;color:var(--navy);font-weight:600;display:block;margin-bottom:6px;line-height:1.25}
+  .bmk .why{font-size:12.5px;color:var(--muted);line-height:1.55;display:block}
+  @media(max-width:820px){.bmk{grid-template-columns:1fr}.bmk > div{border-left:0;border-top:1px solid var(--line)}.bmk > div:first-child{border-top:0}}
+
+  /* one-line plain-English gloss under a statistic's name */
+  .dtable td.m .gloss{display:block;font-weight:400;color:var(--muted);font-size:12px;line-height:1.5;margin-top:3px;max-width:44ch}
 
   /* KPI strip */
-  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;margin:22px 0 0}
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;margin:22px 0 0}
   .kpi{padding:18px 16px;text-align:center;border-left:1px solid var(--line)}
   .kpi:first-child{border-left:0}
   .kpi .k{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-deep);font-weight:700;display:block;margin-bottom:7px;line-height:1.35;min-height:2.3em}
@@ -146,12 +160,49 @@
 </section>
 
 <div class="wrap">
-  <!-- Load / failure states. On any failure this page shows NOTHING numeric. -->
+  <!-- Load / failure states. On any failure this page shows NOTHING numeric.
+       The message span must NOT carry `hidden` — fail() sets its text and
+       un-hides the parent only. Marking the span hidden as well (as it was
+       until 14 Aug 2026) produced a completely blank page on any fetch error:
+       the reader lost the loading text and got nothing in its place. -->
   <div id="loading" class="skel">Loading the published record…</div>
-  <div id="fatal" hidden><span id="fatalMsg" hidden></span></div>
+  <div id="fatal" hidden>
+    <div class="notice err">
+      <b>The published record could not be loaded.</b>
+      Nothing on this page is shown unless every underlying file loads, so that a
+      stale or partial figure can never appear. Please try again shortly.
+      <span class="errdetail" id="fatalMsg"></span>
+    </div>
+  </div>
+  <noscript>
+    <div class="notice warn">
+      <b>This page needs JavaScript.</b>
+      Every figure is read live from the published data feed at load time, so with
+      scripting disabled there is nothing to show. The underlying files are public and
+      can be read directly at
+      <code>github.com/JamesKostohryz/trs-portfolio-feed</code>.
+    </div>
+  </noscript>
 </div>
 
 <main id="main" hidden>
+
+<!-- ===================== AS OF / PROVENANCE STRIP =====================
+     Design rule #1 of this page: never render a number without the date it is
+     good as of. Between roughly June and 14 August 2026 this strip, the price-
+     vintage notice and the provenance line were all absent from the markup while
+     the functions that fill them still existed in the script — so the page showed
+     NAV, positions and a multi-year record with no date anywhere on it. Do not
+     remove these elements without also removing the calls in render(). -->
+<div class="wrap">
+  <div class="pf-asof">
+    <span>Holdings and cash as of <b id="asofLedger">—</b></span>
+    <span>Prices as of <b id="asofPrice">—</b> <span id="asofPriceAge"></span></span>
+    <span>Transactions in the model book: <b id="asofTx">—</b></span>
+    <span>Cost basis: <b id="asofBasis">—</b></span>
+  </div>
+  <div id="freshness"></div>
+</div>
 
 <div class="wrap">
   <div class="chart-ctl" id="pfTabs" style="margin:26px 0 4px">
@@ -249,7 +300,37 @@
 <section class="band">
   <div class="wrap section">
     <h2 style="margin-top:0">Performance</h2>
-    <h3 id="bookHead" style="margin-top:.6em">Since inception</h3>
+
+    <h3 style="margin-top:.6em">How this portfolio is benchmarked</h3>
+    <p class="sect-note" style="margin:0 0 14px">The three reference series on this page do
+      three different jobs. They are not interchangeable, and the strategy is not managed
+      against all three.</p>
+    <div class="bmk">
+      <div>
+        <span class="role">Primary benchmark</span>
+        <span class="what">60 / 40 balanced portfolio</span>
+        <span class="why">iShares AOR, total return. This is the relative bar. Beating it is
+          the portfolio's relative-return objective.</span>
+      </div>
+      <div>
+        <span class="role">Absolute benchmark</span>
+        <span class="what">Treasury bills plus a real equity premium</span>
+        <span class="why">The realized T-bill yield plus roughly 4.5% real per year — the
+          long-run fundamental equity premium. Clearing this over a full business cycle,
+          without large drawdowns, is the definition of success.</span>
+      </div>
+      <div>
+        <span class="role">Stress reference — not a benchmark</span>
+        <span class="what">S&amp;P 500</span>
+        <span class="why">Used to define the market-decline windows against which downside
+          protection is measured, and as the reference for beta and correlation. It is
+          <b>not</b> a performance yardstick: the book runs hedged and cash-heavy and is
+          built to be uncorrelated, so lagging the index in a melt-up is expected and
+          on-strategy. It is shown throughout for context, never as the bar.</span>
+      </div>
+    </div>
+
+    <h3 id="bookHead" style="margin-top:2em">Since inception</h3>
     <div class="kpis three" id="bookKpis"></div>
 
     <h3 style="margin-top:2em">Period returns</h3>
@@ -263,8 +344,8 @@
             <th class="n" colspan="3" style="text-align:center;border-bottom:1px solid var(--line);color:var(--ink)">Annualized</th>
           </tr>
           <tr>
-            <th class="n">Portfolio</th><th class="n">S&amp;P 500</th><th class="n">60 / 40</th>
-            <th class="n">Portfolio</th><th class="n">S&amp;P 500</th><th class="n">60 / 40</th>
+            <th class="n">Portfolio</th><th class="n">60 / 40<br><span style="font-weight:400;text-transform:none;letter-spacing:0">benchmark</span></th><th class="n">S&amp;P 500<br><span style="font-weight:400;text-transform:none;letter-spacing:0">reference</span></th>
+            <th class="n">Portfolio</th><th class="n">60 / 40<br><span style="font-weight:400;text-transform:none;letter-spacing:0">benchmark</span></th><th class="n">S&amp;P 500<br><span style="font-weight:400;text-transform:none;letter-spacing:0">reference</span></th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -291,9 +372,13 @@
         <span><i style="background:#8b96a2"></i>60 / 40 (AOR, total return)</span>
       </div>
       <p class="readout" id="curveRead"></p>
+      <p class="sect-note" id="curveNote"></p>
     </div>
 
-    <h2>Risk Management: Performance During Major Declines</h2>
+    <h2>Performance during major market declines</h2>
+    <p class="sect-note" style="margin:0 0 4px">Downside protection is the headline objective,
+      and this is the test of it. The windows are defined by the S&amp;P 500's own declines —
+      the one job the index does on this page.</p>
     <div class="table-wrap">
       <table class="dtable" id="epTable" style="min-width:640px">
         <thead><tr>
@@ -304,12 +389,16 @@
         <tbody></tbody>
       </table>
     </div>
-    <p class="sect-note" id="epNote">* Rounds up to 10%.</p>
+    <p class="sect-note" id="epNote">* Declines are measured close-to-close, the same basis
+      used everywhere else on this page. Measured peak-to-trough on an intraday basis each of
+      these episodes is somewhat larger — the July 2024 decline, for example, reaches 9.7% —
+      so an episode marked here at just under 10% is a 10% correction on the intraday
+      convention many readers will have in mind.</p>
 
     <h2>Risk statistics</h2>
     <div class="table-wrap">
       <table class="dtable" id="riskTable" style="min-width:520px">
-        <thead><tr><th>Statistic</th><th class="n">Portfolio</th><th class="n">S&amp;P 500</th><th class="n">60 / 40</th></tr></thead>
+        <thead><tr><th>Statistic</th><th class="n">Portfolio</th><th class="n">60 / 40<br><span style="font-weight:400;text-transform:none;letter-spacing:0">benchmark</span></th><th class="n">S&amp;P 500<br><span style="font-weight:400;text-transform:none;letter-spacing:0">reference</span></th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -332,6 +421,15 @@
 </section>
 
 </div><!-- /tab-analysis -->
+
+<!-- ============================ PROVENANCE ============================
+     Shown on every tab. States where each block of figures comes from and the
+     date each is good as of. Do not remove without removing the prov() call. -->
+<section class="section" style="padding-top:0">
+  <div class="wrap">
+    <div class="notice info"><b>Provenance</b><span id="provText"></span></div>
+  </div>
+</section>
 
 </main>
 
@@ -538,6 +636,14 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       S.curve.trs[S.curve.trs.length - 1] = nav;
     }
 
+    /* asof(), freshness() and prov() implement this page's first design rule —
+       never render a number without the date it is good as of. All three were
+       defined but never called, and their target elements had been deleted from
+       the markup, so for some months the page published NAV, holdings and a
+       multi-year record with no date on it anywhere. Both halves are restored.
+       If you remove an element these write into, remove the call as well. */
+    asof(M, P, S);
+    freshness(P, M, S);
     kpis(D, nav, cash, cashW, P, mv, basis);
     positions(P, S, mv, basis, cash, cashW, nav);
     allocation(P, S, cash, nav);
@@ -549,6 +655,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     episodes(S);
     risk(S);
     trades(S);
+    prov(M, S);
   }
 
   /* --- transactions -------------------------------------------------------
@@ -765,16 +872,24 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   function book(D, M, S) {
     var nav = num(D.nav);
     var tr = (nav === null || isNaN(nav)) ? null : nav / INCEPTION_BASE - 1;
-    var yrs = (Date.now() - d(INCEPTION_ISO)) / (365.25 * 24 * 3600 * 1000);
+    /* Elapsed time is measured to the date the NAV is good as of, NOT to
+       Date.now(). Using the clock advanced the denominator every day while the
+       numerator stayed frozen at ledger_through, so the published CAGR drifted
+       quietly downward between feed refreshes. */
+    var asOf = M.ledger_through ? d(M.ledger_through) : Date.now();
+    var yrs = (asOf - d(INCEPTION_ISO)) / (365.25 * 24 * 3600 * 1000);
     var ann = (tr === null) ? null : Math.pow(1 + tr, 1 / yrs) - 1;
     var aorRow = S.period_returns.filter(function (p) { return p.period === 'Since inception'; })[0];
-    var alpha = (tr === null || !aorRow) ? null : tr - aorRow.aor;
-    var alphaStr = alpha === null || isNaN(alpha) ? '—' :
-      (alpha > 0 ? '+' : MINUS) + Math.abs(alpha * 100).toFixed(0) + ' pts';
+    /* Not "alpha". Alpha is a regression intercept; this is plain cumulative
+       excess return over the primary benchmark. Beta is published a few rows
+       below on this same page, so the loose usage was conspicuous. */
+    var xs = (tr === null || !aorRow) ? null : tr - aorRow.aor;
+    var xsStr = xs === null || isNaN(xs) ? '—' :
+      (xs > 0 ? '+' : MINUS) + Math.abs(xs * 100).toFixed(0) + ' pts';
     el('bookKpis').innerHTML = [
       ['Total return', signPct(tr), cls(tr), 'capital, dividends and interest'],
       ['Annualized', ann === null ? '—' : signPct(ann) + '/yr', cls(ann), 'compound annual growth rate'],
-      ['Alpha vs 60/40', alphaStr, cls(alpha), 'cumulative, in points']
+      ['Excess return vs 60/40', xsStr, cls(xs), 'cumulative, in percentage points']
     ].map(function (r) {
       return '<div class="kpi"><span class="k">' + esc(r[0]) + '</span><span class="v ' + r[2] + '">' +
              esc(r[1]) + '</span><span class="s">' + esc(r[3]) + '</span></div>';
@@ -788,9 +903,12 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     el('perTable').querySelector('tbody').innerHTML = S.period_returns.map(function (p) {
       function c(v) { return '<td class="n ' + cls(v) + '">' + signPct(v) + '</td>'; }
       function a(v) { return '<td class="n">' + (v === null ? '—' : signPct(v)) + '</td>'; }
+      // Column order is Portfolio, 60/40, S&P — the primary benchmark sits next
+      // to the portfolio and the stress reference sits outside it. Order signals
+      // which comparison the strategy is actually managed against.
       return '<tr><td class="m">' + esc(p.period) + '</td>' +
         '<td class="n" style="text-align:left">' + shortDate(p.start) + '</td>' +
-        c(p.trs) + c(p.spy) + c(p.aor) + a(p.trs_a) + a(p.spy_a) + a(p.aor_a) + '</tr>';
+        c(p.trs) + c(p.aor) + c(p.spy) + a(p.trs_a) + a(p.aor_a) + a(p.spy_a) + '</tr>';
     }).join('');
   }
 
@@ -960,13 +1078,32 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       readAt(dates.length - 1);
     });
 
-    var res = (S.resolution && S.resolution.segments || []).map(function (s) {
-      return s.cadence + ' ' + shortDate(s.from) + '–' + shortDate(s.to);
-    }).join(', ');
-    var gaps = (S.resolution && S.resolution.gaps || []).map(function (g) {
-      return shortDate(g.from) + ' to ' + shortDate(g.to);
-    });
-
+    /* Sampling-cadence disclosure. This was computed and then silently discarded
+       until 14 August 2026, which mattered: the series is not uniformly sampled,
+       and the monthly stretch in the middle understates measured volatility and
+       drawdown over that window relative to the daily stretches either side.
+       A reader comparing this curve or the risk statistics to a daily benchmark
+       series is entitled to know that. */
+    var segs = (S.resolution && S.resolution.segments) || [];
+    var gaps = (S.resolution && S.resolution.gaps) || [];
+    var note = '';
+    if (segs.length) {
+      var mixed = segs.some(function (s) { return s.cadence !== segs[0].cadence; });
+      note += 'Sampling: ' + segs.map(function (s) {
+        return s.cadence + ', ' + shortDate(s.from) + ' to ' + shortDate(s.to);
+      }).join('; ') + '.';
+      if (mixed) {
+        note += ' The series is not sampled at a uniform interval. Volatility and drawdown ' +
+                'measured across a monthly stretch are necessarily smaller than the same ' +
+                'figures measured daily, because moves within a month are not observed.';
+      }
+    }
+    if (gaps.length) {
+      note += ' Gaps in the record: ' + gaps.map(function (g) {
+        return shortDate(g.from) + ' to ' + shortDate(g.to);
+      }).join(', ') + '.';
+    }
+    el('curveNote').textContent = note;
   }
 
   /* --- decline episodes -------------------------------------------------- */
@@ -998,31 +1135,50 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   /* --- risk statistics --------------------------------------------------- */
   function risk(S) {
     var m = S.risk;
-    // Sharpe dropped per James (Sortino only). "Value at risk" is now the
-    // median across each calendar year's own VaR, not one figure pooled
-    // across the whole (mixed daily/weekly/monthly) sample. "Annualised
-    // volatility" is now the downside semi-deviation - the same dispersion
-    // figure Sortino itself is already built on - not standard deviation
-    // across all returns. Downside beta is new: beta computed only over
-    // periods the S&P itself was down.
+    /* Sharpe is deliberately not published (Sortino only, James's call).
+       "Median annual value at risk" was REMOVED on 14 August 2026. It was
+       computed as a single-period (near-daily) 5th-percentile loss grouped by
+       calendar year but never converted to a one-year horizon, so it published
+       as ~1.5% — far too small to mean "how much am I subject to lose". The
+       obvious repair, scaling by sqrt(periods-per-year), assumes i.i.d. normal
+       returns, which a strategy built to go to cash in dislocations violates by
+       construction; and 8 calendar years cannot support a 5th-percentile
+       estimate computed directly. Maximum drawdown and the decline-episode
+       table answer the same question without an indefensible assumption.
+       build_master_curve.py still computes avar_* into series.json; it is simply
+       no longer displayed. Do not reinstate this row without a defensible
+       derivation.
+
+       Column order is Portfolio, 60/40 (primary benchmark), S&P 500 (stress
+       reference) — matching the period-returns table above. Beta and downside
+       beta are measured against the S&P by definition, so their "60/40" cell is
+       the benchmark's own beta, not a comparison of like with like; the gloss
+       says so. */
     var rows = [
-      ['Compound annual growth rate', m.cagr, m.s_cagr, m.b_cagr, 'pct'],
-      ['Annualised downside semi-deviation', m.dd, m.s_dd, m.b_dd, 'pct'],
-      ['Maximum drawdown', m.mdd, m.smdd, m.b_mdd, 'pct'],
-      ['Median annual value at risk', m.avar_med, m.s_avar_med, m.b_avar_med, 'pct'],
-      ['Sortino ratio', m.sortino, m.s_sortino, m.b_sortino, 'num'],
-      ['Beta to the S&P 500', m.beta, 1, m.b_beta, 'num'],
-      ['Downside beta to the S&P 500', m.dbeta, 1, m.b_dbeta, 'num']
+      ['Compound annual growth rate', 'The rate at which the portfolio has compounded, per year, over the whole period.',
+        m.cagr, m.b_cagr, m.s_cagr, 'pct'],
+      ['Annualized downside volatility', 'How much the value swings, counting only the moves that lose money. Lower is better.',
+        m.dd, m.b_dd, m.s_dd, 'pct'],
+      ['Maximum drawdown', 'The deepest peak-to-trough fall on record. The single most important capital-preservation measure.',
+        m.mdd, m.b_mdd, m.smdd, 'pct'],
+      ['Sortino ratio', 'Return earned per unit of downside risk taken. Higher is better.',
+        m.sortino, m.b_sortino, m.s_sortino, 'num'],
+      ['Beta to the S&P 500', 'How much the portfolio moves for a given move in the index. 1.00 would mean moving in lockstep.',
+        m.beta, m.b_beta, 1, 'num'],
+      ['Downside beta to the S&P 500', 'The same measure, computed only over the periods in which the index itself fell.',
+        m.dbeta, m.b_dbeta, 1, 'num']
     ];
     el('riskTable').querySelector('tbody').innerHTML = rows.map(function (r) {
       function v(x) {
         if (x === null || x === undefined) return '<td class="n">—</td>';
-        var s = r[4] === 'pct'
+        var s = r[5] === 'pct'
           ? Math.abs(x * 100).toFixed(1) + '%'
           : Math.abs(x).toFixed(2);
         return '<td class="n">' + (x < 0 ? MINUS : '') + s + '</td>';
       }
-      return '<tr><td class="m">' + r[0].replace('&', '&amp;') + '</td>' + v(r[1]) + v(r[2]) + v(r[3]) + '</tr>';
+      return '<tr><td class="m">' + r[0].replace(/&/g, '&amp;') +
+        '<span class="gloss">' + esc(r[1]) + '</span></td>' +
+        v(r[2]) + v(r[3]) + v(r[4]) + '</tr>';
     }).join('');
 
   }
@@ -1043,16 +1199,21 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     el('tradeCount').textContent = list.length + ' closed positions';
   }
 
-  /* --- provenance (unused; kept for reference, not called from render()) -- */
+  /* --- provenance --------------------------------------------------------- */
   function prov(M, S) {
     el('provText').innerHTML =
       'Holdings, transactions and income: published record through <b>' + longDate(M.ledger_through) + '</b>, ' +
-      'cost basis ' + M.cost_basis_method +
-      ', excluding ' + esc(M.excludes || '') + '. ' +
-      'Long-term series, period returns, decline episodes and risk statistics: through <b>' +
+      'cost basis ' + esc(M.cost_basis_method || '—') +
+      ', opening basis ' + esc(M.opening_basis || '—') +
+      ', excluding ' + esc(M.excludes || '—') + '. ' +
+      'Period returns, the long-term series, decline episodes and risk statistics: through <b>' +
       longDate(S.series_through) + '</b>. ' +
-      'Benchmarks are SPY for the S&amp;P 500 and AOR for the 60/40, both on a total-return basis. ' +
-      'Feed generated ' + esc(M.generated_utc || '—') + '; series generated ' + esc(S.generated_utc || '—') + '.';
+      'The 60/40 benchmark is iShares AOR and the S&amp;P 500 reference is SPY, both on a ' +
+      'total-return basis, except the decline-episode table, which uses the S&amp;P 500 index ' +
+      'itself to define its windows. ' +
+      'Feed generated ' + esc(M.generated_utc || '—') + '; series generated ' + esc(S.generated_utc || '—') + '. ' +
+      'Every figure on this page is read at load time from the public data feed at ' +
+      'github.com/JamesKostohryz/trs-portfolio-feed; nothing is typed into the page by hand.';
   }
 })();
 </script>
