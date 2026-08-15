@@ -2017,13 +2017,18 @@ var CUR = { range: 'all', log: true, S: null };
        is scaled, and it answers the question VaR was there to answer in a
        sentence a reader can check against the chart.
 
-       The FIFTH-PERCENTILE twelve-month return is deliberately not shown. It
-       is computed in the engine and it is worse for the portfolio than for
-       either benchmark, because the book spends more time modestly underwater
-       even though its single worst episode is milder. Publishing worst-case
-       without it is James's decision of 14 August 2026, taken with the figure
-       in front of him — not an oversight. Do not add the column back without
-       asking him.
+       The FIFTH-PERCENTILE twelve-month return sits directly underneath it,
+       published from 15 August 2026 by James's decision. It had been withheld
+       the day before on the grounds that it was much worse for the portfolio
+       than for either benchmark. That was an artefact of measurement, not a
+       property of the record: the date grid then had an 18-month hole in it
+       (31 May 2022 to 30 Nov 2023 carried 18 month-end points and nothing
+       between), so most twelve-month windows spanning the 2022 bear market did
+       not exist and the benchmarks were measured almost entirely across two
+       advances. On the reconstructed daily grid the portfolio's own figure
+       barely moves and the benchmarks' fall a long way. The gloss says so,
+       because a reader who checks will find the portfolio's own number got
+       slightly WORSE, and that is better volunteered than discovered.
 
        DOWN-CAPTURE is published; UP-CAPTURE is not, also James's decision the
        same day: the S&P is a stress reference on this page, not a yardstick,
@@ -2036,6 +2041,14 @@ var CUR = { range: 'all', log: true, S: null };
       rows.push(['Worst twelve months on record',
         'The largest fall over any twelve-month stretch the record contains. Directly observed, not estimated.',
         roll.trs.worst, roll.aor.worst, roll.spy.worst, 'pct']);
+      if (roll.trs.p5 !== undefined && roll.trs.p5 !== null) {
+        rows.push(['A bad twelve months, but not the worst',
+          'The fifth-percentile twelve-month return: one twelve-month stretch in twenty was at least this bad. ' +
+          'A percentile of overlapping windows — ' + (roll.trs.windows || 0).toLocaleString() +
+          ' of them, but only about eight independent years underneath — so read it as roughly this level, ' +
+          'not to the decimal. The same caveat applies to all three columns equally.',
+          roll.trs.p5, roll.aor.p5, roll.spy.p5, 'pct']);
+      }
     }
     if (cap) {
       /* Down-capture is now the COMPOUNDED result across every month the
@@ -2161,6 +2174,20 @@ var CUR = { range: 'all', log: true, S: null };
         'history is roughly eight independent annual observations no matter how many ' +
         'endpoints it yields — and the benchmark figures are flattered by an exceptional bull ' +
         'run over the same span. Read them as description, not as a forecast distribution.</p>');
+      if (roll.trs.p5 !== undefined && roll.trs.p5 !== null) {
+        p.push('<p><b>One thing worth stating plainly about the fifth percentile.</b> ' +
+          'Until 15 August 2026 this figure was measured on a record that carried the ' +
+          'stretch from 31 May 2022 to 30 November 2023 as eighteen month-end values and ' +
+          'nothing in between. Most twelve-month windows spanning the 2022 bear market ' +
+          'therefore did not exist, for the portfolio or for either benchmark, and the ' +
+          'benchmarks in particular were measured almost entirely across the advances ' +
+          'either side of it. That stretch has since been reconstructed day by day. The ' +
+          'effect of the correction was to move the portfolio’s own figure very little and ' +
+          'the benchmarks’ a long way — so the portfolio reads better here than it did ' +
+          'before, but not because the portfolio improved. Its own number is slightly ' +
+          'worse than the earlier estimate. What changed is that the comparison became ' +
+          'valid.</p>');
+      }
     }
 
     p.push('<p><b>What is deliberately absent.</b> Value at risk is not published. It was ' +
