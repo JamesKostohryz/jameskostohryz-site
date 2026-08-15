@@ -641,6 +641,19 @@
       Each panel shows all three series rebased to the peak: the index, the 60/40 benchmark
       and the portfolio.</p>
 
+    <!-- Compounded through the decline windows only. The single most striking
+         figure on the page, and the one most capable of being misread, so it
+         is labelled as a hypothetical isolation of those windows in the strip
+         itself and again underneath it. No ratio is shown: the index falls
+         and the portfolio rises, so a capture ratio would be negative and
+         would communicate nothing. -->
+    <h3 style="margin-top:1.6em">$100,000 exposed only to these declines</h3>
+    <p class="sect-note" style="margin:0 0 4px" id="epCompNote"></p>
+    <div class="stats" id="epCompound"></div>
+    <p class="sect-note" id="epCompCaveat"></p>
+
+    <h3 style="margin-top:2em">Each decline, one panel at a time</h3>
+
     <!-- ==================== 7. EPISODES AS SMALL MULTIPLES ====================
          One panel per decline, identical axes: the S&P in grey, the 60/40
          benchmark in a lighter slate, the portfolio in navy. A reader sees
@@ -984,6 +997,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     periods(S);
     curve(S);
     episodes(S);
+    episodeCompound(S);
     episodeSmalls(S);
     rollingCorr(S);
     risk(S);
@@ -1052,15 +1066,16 @@ document.getElementById('yr').textContent = new Date().getFullYear();
         '<span class="verdict">' + (t.pass ? 'Passed' : 'Not met') + '</span>' +
         '<span class="fig">' + signPct(t.value) + '</span>' +
         '<span class="figlab">' + (isEp
-          ? 'the portfolio, averaged across ' + t.episodes + ' market declines'
+          ? 'the portfolio, compounded through ' + t.episodes + ' market declines'
           : 'the portfolio, total return since inception') + '</span>' +
         '<span class="vsrow"><span class="vsnum">' + signPct(t.bar) + '</span>' +
           '<span class="vslab"><b>' + esc(t.benchmark) + '</b>' +
           (isEp ? 'the same ' + t.episodes + ' declines' : 'over the same period') +
           '</span></span>' +
         '<span class="gap">' + (isEp
-          ? 'Ahead by <b>' + fx(Math.abs(t.gap * 100), 1) + ' points</b> on average, and ' +
-            esc(t.detail)
+          ? 'Ahead by <b>' + fx(Math.abs(t.gap * 100), 1) + ' points</b>, and ' +
+            esc(t.detail) + '. Averaged per decline: <b>' + signPct(t.mean_value) +
+            '</b> against <b>' + signPct(t.mean_bar) + '</b>.'
           : 'Ahead by <b>' + fx(Math.abs(t.gap * 100), 1) + ' points</b>') + '</span>' +
       '</div>';
     }).join('');
@@ -1076,9 +1091,13 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       'so it cancels, and no separate price index is involved. ' +
       'The third test covers every decline of roughly 10% or more in the S&amp;P 500 since ' +
       'the record begins — ' + (ep.episodes || '—') + ' of them, ' + (ep.bear_count || 0) +
-      ' of which were bear markets. Each is measured peak to trough on the index’s own ' +
-      'dates, and they are listed individually further down this page. The worst any of ' +
-      'them was for the portfolio was ' + signPct(ep.worst_trs) + '. ' +
+      ' of which were bear markets, measured peak to trough on the index’s own dates and ' +
+      'listed individually further down this page. Its figure is the compounded result of ' +
+      'those ' + (ep.episodes || '—') + ' windows and nothing else: it is what a holder ' +
+      'would have experienced if they had been exposed to the market’s declines and to no ' +
+      'other part of the record. It is a deliberate isolation of the worst stretches, not ' +
+      'a return anybody earned. The worst any single decline was for the portfolio was ' +
+      signPct(ep.worst_trs) + '. ' +
       'Passing all three does not make the next eight years look like the last eight.';
   }
 
@@ -1194,6 +1213,50 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       'This chart covers ' + longDate(cs.from) + ' to ' + longDate(cs.to) + ' only: before ' +
       'the model book began there is a net account value on record but no securities-versus-' +
       'cash split behind it, and estimating one backwards would not be an observation.';
+  }
+
+  /* --- decline episodes, compounded ----------------------------------------
+     Chain the seven peak-to-trough returns together and ask what $100,000
+     would have done if it had been exposed to those windows and to nothing
+     else. It is the sharpest statement the record supports and it is also the
+     easiest figure on the page to misread, so every label says explicitly
+     that it isolates the declines and is not a return anyone earned.
+
+     No capture RATIO is shown. The index falls 73% and the portfolio rises
+     32%, so the ratio is negative — arithmetically true, and useless. */
+  function episodeCompound(S) {
+    var ep = (S.extras || {}).episode_summary;
+    if (!ep) return;
+    var B = 100000;
+    el('epCompNote').innerHTML =
+      'The seven declines below, chained together and nothing else — ' +
+      ep.days_in_decline + ' calendar days out of ' +
+      Math.round((d(S.series_through) - d(S.curve.dates[0])) / 86400000) + ' in the record. ' +
+      'This is not a return anyone earned; it isolates the market’s worst stretches and ' +
+      'discards every recovery in between, for all three series alike.';
+
+    el('epCompound').innerHTML = [
+      ['S&P 500 — stress reference', money(B * (1 + ep.compounded_spy), 0), 'down',
+        signPct(ep.compounded_spy) + ' compounded'],
+      ['60 / 40 — relative benchmark', money(B * (1 + ep.compounded_aor), 0), 'down',
+        signPct(ep.compounded_aor) + ' compounded'],
+      ['The portfolio', money(B * (1 + ep.compounded_trs), 0), cls(ep.compounded_trs),
+        signPct(ep.compounded_trs) + ' compounded'],
+      ['Outperformed the index in', ep.beat_spy + ' of ' + ep.episodes, '',
+        'including ' + ep.bear_count + ' bear market' + (ep.bear_count === 1 ? '' : 's')]
+    ].map(statCard).join('');
+
+    el('epCompCaveat').innerHTML =
+      'Taking the two bear markets alone — the ' +
+      'declines of 20% or more — the index compounds to ' + signPct(ep.bear_compounded_spy) +
+      ', the 60/40 benchmark to ' + signPct(ep.bear_compounded_aor) + ' and the portfolio to ' +
+      signPct(ep.bear_compounded_trs) + '. ' +
+      '<b>Two things this does not say.</b> It does not say the portfolio made money over ' +
+      'the record by being short — it was positive in only ' +
+      ((S.episodes || []).filter(function (e) { return e.trs !== null && e.trs > 0; }).length) +
+      ' of the ' + ep.episodes + ' declines and merely lost less in the rest. And it does ' +
+      'not say anything about what the book does in a rising market, which is a different ' +
+      'question answered by the period returns and the long-term chart above.';
   }
 
   /* --- 7. decline episodes as small multiples ------------------------------ */
@@ -2034,6 +2097,17 @@ var CUR = { range: 'all', log: true, S: null };
       'comparison.</p>');
 
     if (cap) {
+      p.push('<p><b>Three different measures of the same instinct, and they are not ' +
+        'interchangeable.</b> The scorecard compounds the ' + (x.episode_summary || {}).episodes +
+        ' major decline windows only, and answers "when the market actually broke, what ' +
+        'happened?" The downside-capture row in the table above compounds every calendar ' +
+        'month the index fell, big or small, and answers "across all the market\'s ' +
+        'weakness, how much did the book take?" Downside beta regresses across every ' +
+        'observation in the record. They give ' + signPct((x.episode_summary || {}).compounded_trs) +
+        ' against ' + signPct((x.episode_summary || {}).compounded_spy) + ', ' + pct(cap.down) +
+        ', and ' + (m.dbeta === undefined ? '—' : fx(m.dbeta)) + ' respectively. None ' +
+        'contradicts the others; they are answers to three different questions.</p>');
+
       p.push('<p><b>Why downside capture is measured monthly.</b> ' +
         esc(cap.method.charAt(0).toUpperCase() + cap.method.slice(1)) + ': ' +
         cap.down_periods + ' months out of ' + cap.total_periods + '. Compounding only ' +
