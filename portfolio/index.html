@@ -82,7 +82,8 @@
   .dtable tbody tr.tot{background:#fff;border-top:2px solid var(--navy)}
   .dtable tbody tr.tot td{font-weight:700;color:var(--navy-deep);border-bottom:0}
   .up{color:var(--up)} .down{color:var(--down)}
-  .outperform{background:#e3f3ea;color:var(--up);font-weight:700;border-radius:3px}
+  /* .outperform is defined further down — bold plus a small triangle, no fill.
+     It used to be a solid green block spanning two whole columns. */
   .lev{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#7a2718;background:#fbe3dd;border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:middle}
   .cashrow td{background:#f2f6fa!important;font-style:italic;color:var(--muted)}
 
@@ -129,6 +130,137 @@
   .sect-note{font-size:12.5px;color:var(--faint);margin:10px 0 0;line-height:1.6;max-width:80ch}
   .skel{color:var(--faint);font-family:var(--serif);font-size:18px;padding:34px 0}
   [hidden]{display:none!important}
+
+  /* ---------- 1. THREE-TEST SCORECARD --------------------------------------
+     The prospectus sets three objectives. This states each as a test with a
+     verdict and its number, BEFORE any table, so a reader who stops after the
+     first screen has still seen the answer rather than a wall of statistics
+     they have to adjudicate themselves. ------------------------------------ */
+  .score{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:8px 0 4px}
+  @media(max-width:900px){.score{grid-template-columns:1fr}}
+  .sc{border:1px solid var(--line);border-top:3px solid var(--navy);border-radius:12px;background:#fff;padding:20px 20px 18px;display:flex;flex-direction:column}
+  .sc.pass{border-top-color:var(--up)} .sc.failv{border-top-color:var(--down)}
+  .sc .t{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--gold-deep);font-weight:700;display:block;margin-bottom:9px}
+  .sc .q{font-family:var(--serif);font-size:17px;color:var(--navy);line-height:1.3;display:block;margin-bottom:14px}
+  .sc .verdict{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;border-radius:20px;padding:4px 13px;align-self:flex-start;margin-bottom:13px}
+  .sc.pass .verdict{background:#e3f3ea;color:#0b5c3e} .sc.failv .verdict{background:#fdece9;color:#8f2d1c}
+  .sc .fig{font-family:var(--serif);font-size:27px;font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1.05;display:block}
+  .sc .vs{display:block;font-size:13px;color:var(--muted);margin-top:8px;line-height:1.55;font-variant-numeric:tabular-nums}
+  .sc .vs b{color:var(--navy-deep);font-weight:700}
+  .sc .gap{display:block;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+  .sc .gap b{font-variant-numeric:tabular-nums}
+
+  /* ---------- charts drawn as inline SVG ---------------------------------- */
+  .minichart{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px 12px;margin-top:6px}
+  .minichart h3{margin:0 0 4px;font-size:16px}
+  svg.chart2{display:block;width:100%;height:auto}
+  .chart-sub{font-size:12.5px;color:var(--faint);margin:0 0 12px;line-height:1.55;max-width:80ch}
+
+  /* decline episodes as small multiples: seven identical panels, index in grey,
+     portfolio in navy, no fills, no gradients. Plainest styling on the page. */
+  .smalls{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:8px}
+  @media(max-width:980px){.smalls{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.smalls{grid-template-columns:1fr}}
+  .sm{border:1px solid var(--line);border-radius:10px;background:#fff;padding:13px 14px 10px}
+  .sm .nm{font-size:12.5px;font-weight:700;color:var(--navy);display:block;line-height:1.3}
+  .sm .dt{font-size:11px;color:var(--faint);display:block;margin:2px 0 8px}
+  .sm svg{display:block;width:100%;height:auto}
+  .sm .fig{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-top:7px;font-variant-numeric:tabular-nums}
+  .sm .fig span b{font-weight:700}
+  .sm .idx{color:var(--muted)} .sm .pf{color:var(--navy);font-weight:700}
+
+  /* ---------- data-table toolbar (transactions) --------------------------- */
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 4px}
+  .toolbar input,.toolbar select{font-family:var(--sans);font-size:13px;color:var(--ink);border:1px solid #cdd6de;border-radius:8px;padding:7px 11px;background:#fff}
+  .toolbar input:focus,.toolbar select:focus{outline:2px solid var(--navy);outline-offset:1px}
+  .toolbar input[type=search]{min-width:190px;flex:1 1 190px;max-width:280px}
+  .toolbar .count{font-size:12.5px;color:var(--muted);margin-left:auto;font-variant-numeric:tabular-nums}
+  .dtable th.sortable{cursor:pointer;user-select:none;white-space:nowrap}
+  .dtable th.sortable:hover{color:var(--navy)}
+  .dtable th.sortable .ar{opacity:.35;font-size:9px;margin-left:3px}
+  .dtable th.sortable[aria-sort] .ar{opacity:1;color:var(--navy)}
+  .pager{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0 0;font-size:12.5px;color:var(--muted)}
+  .pager button{font-family:var(--sans);font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:8px;border:1px solid #cdd6de;background:#fff;color:var(--navy);cursor:pointer}
+  .pager button[disabled]{opacity:.4;cursor:default;color:var(--muted)}
+  .era{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:4px;padding:1px 6px;background:var(--panel);color:var(--muted);white-space:nowrap}
+  .era.model{background:#e8eef4;color:var(--navy)}
+
+  /* ---------- 7. softened outperformance marker ---------------------------
+     Was a filled green cell spanning two whole columns, which reads as
+     promotional. Bold plus a small triangle reads as data. */
+  .outperform{font-weight:700}
+  .outperform .tri{font-size:9px;margin-left:3px;vertical-align:1px}
+
+  /* ---------- 9. progressive disclosure ----------------------------------- */
+  details.method{border:1px solid var(--line);border-radius:10px;background:var(--panel);margin:16px 0 0}
+  details.method>summary{cursor:pointer;padding:12px 16px;font-size:13px;font-weight:600;color:var(--navy);list-style:none}
+  details.method>summary::-webkit-details-marker{display:none}
+  details.method>summary::before{content:'▸ ';color:var(--gold-deep)}
+  details.method[open]>summary::before{content:'▾ '}
+  details.method .body{padding:0 16px 15px;font-size:13px;line-height:1.65;color:#40505f;max-width:88ch}
+  details.method .body p{margin:0 0 11px} details.method .body p:last-child{margin-bottom:0}
+  details.method .body b{color:var(--navy-deep)}
+
+  /* ---------- summary-statistic strip (closed positions) ------------------ */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;margin:16px 0 0}
+  .stats>div{padding:16px 15px;border-left:1px solid var(--line)}
+  .stats>div:first-child{border-left:0}
+  .stats .k{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-deep);font-weight:700;display:block;margin-bottom:6px;line-height:1.35;min-height:2.3em}
+  .stats .v{font-family:var(--serif);font-size:21px;font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums;display:block}
+  .stats .v.up{color:var(--up)} .stats .v.down{color:var(--down)}
+  .stats .s{display:block;font-size:11.5px;color:var(--faint);margin-top:4px}
+  @media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr)}.stats>div:nth-child(odd){border-left:0}.stats>div:nth-child(n+3){border-top:1px solid var(--line)}}
+
+  /* download links */
+  .dl{display:flex;flex-wrap:wrap;gap:8px 14px;margin:14px 0 0;font-size:12.5px}
+  .dl a{color:var(--navy);text-decoration:none;border-bottom:1px solid #cdd6de;padding-bottom:1px}
+  .dl a:hover{border-bottom-color:var(--navy)}
+
+  /* ---------- 10. print ---------------------------------------------------
+     This is a document people save as PDF and forward. Printing must show ALL
+     three tabs, not whichever one happened to be open, and must not clip a
+     table at the page edge. -------------------------------------------------- */
+  @media print{
+    .site-head,.site-foot,#pfTabs,.toolbar,.pager,.chart-ctl,.dl{display:none!important}
+    [hidden]{display:block!important}
+    #loading,#fatal,.nav-toggle{display:none!important}
+    body{background:#fff;font-size:11pt}
+    .table-wrap{overflow:visible}
+    .dtable{min-width:0!important;font-size:9.5pt}
+    .dtable td,.dtable th{padding:5px 7px}
+    section,.section,.band{page-break-inside:auto;background:#fff!important}
+    h2,h3{page-break-after:avoid}
+    .chartcard,.minichart,.sc,.sm,.notice{page-break-inside:avoid;border-color:#bbb}
+    .score{grid-template-columns:repeat(3,1fr)}
+    details.method{border-color:#bbb}
+    details.method .body{display:block!important}
+    a[href]:after{content:''}
+    /* Printing shows all three panels. They are laid out in the DOM in the
+       order the tab bar was originally built; this puts them on paper in the
+       order the tab bar now reads. */
+    main{display:flex;flex-direction:column}
+    #tab-performance{order:1} #tab-portfolio{order:2} #tab-activity{order:3}
+    #provSection{order:4}
+  }
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  /* ---------- 10. wide tables on a phone -----------------------------------
+     The positions table is nine columns and the period-return table is eight;
+     on a phone both scroll sideways and the row you are reading loses its
+     label as soon as you do. Pinning the first column keeps the name or the
+     period visible while the numbers scroll under it, and a hint says the
+     table scrolls rather than leaving it to be discovered. ----------------- */
+  @media(max-width:700px){
+    .table-wrap{position:relative}
+    .table-wrap::after{content:'Scroll sideways for more columns →';display:block;font-size:11px;color:var(--faint);padding:6px 2px 0;position:sticky;left:0}
+    .dtable thead th:first-child,
+    .dtable tbody td:first-child{position:sticky;left:0;z-index:1;background:#fff;box-shadow:1px 0 0 var(--line)}
+    .dtable tbody tr:nth-child(even) td:first-child{background:var(--paper)}
+    .dtable tbody tr.tot td:first-child{background:#fff}
+    .dtable tbody tr.cashrow td:first-child{background:#f2f6fa}
+    .dtable .m{min-width:120px}
+    .dtable th,.dtable td{padding:9px 9px;font-size:13px}
+  }
 </style>
 </head>
 <body>
@@ -205,16 +337,23 @@
 </div>
 
 <div class="wrap">
+  <!-- Re-cut 14 Aug 2026. The three tabs used to be Portfolio (2 sections) /
+       Transactions (1 table) / Analysis (6 sections) — the tab holding
+       everything that matters was the junk drawer, and it was not the default.
+       Now: PERFORMANCE first and by default (does the strategy work),
+       PORTFOLIO (what it holds right now), ACTIVITY (what it did and what it
+       closed). Income moved to Portfolio, closed positions moved to Activity.
+       The tab is in the URL hash so a section can be linked to directly. -->
   <div class="chart-ctl" id="pfTabs" style="margin:26px 0 4px">
-    <div class="grp">
-      <button class="tabbtn on" data-tab="portfolio" type="button">Portfolio</button>
-      <button class="tabbtn" data-tab="transactions" type="button">Transactions</button>
-      <button class="tabbtn" data-tab="analysis" type="button">Analysis</button>
+    <div class="grp" role="tablist" aria-label="Model portfolio sections">
+      <button class="tabbtn on" id="tabbtn-performance" role="tab" aria-selected="true" aria-controls="tab-performance" data-tab="performance" type="button">Performance</button>
+      <button class="tabbtn" id="tabbtn-portfolio" role="tab" aria-selected="false" tabindex="-1" aria-controls="tab-portfolio" data-tab="portfolio" type="button">Portfolio</button>
+      <button class="tabbtn" id="tabbtn-activity" role="tab" aria-selected="false" tabindex="-1" aria-controls="tab-activity" data-tab="activity" type="button">Activity</button>
     </div>
   </div>
 </div>
 
-<div id="tab-portfolio">
+<div id="tab-portfolio" role="tabpanel" aria-labelledby="tabbtn-portfolio" tabindex="0" hidden>
 
 <!-- ============================ 1. CURRENT BOOK ============================ -->
 <section class="section" style="padding-top:14px">
@@ -244,41 +383,50 @@
       <div class="alloc"><h3>By region</h3><div id="allocRegion"></div></div>
       <div class="alloc"><h3>By theme</h3><div id="allocTheme"></div></div>
     </div>
+    <!-- Concentration, never published before this revision. A fifteen-row
+         positions table reads as a diversified book; the weights say
+         otherwise, and the page should say so before a reader works it out. -->
+    <div class="notice warn" id="concentration"></div>
   </div>
 </section>
 
-</div><!-- /tab-portfolio -->
-
-<div id="tab-transactions" hidden>
-<section class="section" style="padding-top:14px">
+<!-- ==================== 6. CASH AND EXPOSURE THROUGH TIME ====================
+     Added 14 Aug 2026. Cash in this strategy is an ACTIVE position — the
+     market-timing decision made visible — and until now no published chart
+     showed it moving. The same panel carries the leverage disclosure: the book
+     has run a negative cash balance, and the page never said so. -->
+<section class="section">
   <div class="wrap">
-    <h2 style="margin-top:0">Transactions</h2>
-    <div class="chart-ctl" style="margin-bottom:8px">
-      <div class="grp"><span class="muted" style="font-size:12.5px" id="txCount"></span></div>
+    <h2 style="margin-top:0">Cash and exposure through time</h2>
+    <p class="sect-note" style="margin:0 0 10px">Cash here is not a residual. Raising
+      and spending it is the strategy's central decision, and this is the only chart on
+      the page that shows that decision being made. A negative cash weight means the book
+      was borrowing.</p>
+    <div class="minichart">
+      <svg class="chart2" id="cashChart" viewBox="0 0 960 300" role="img" aria-label="Cash weight and gross exposure through time"></svg>
+      <div class="legend">
+        <span><i style="background:#c9a94e"></i>Cash, % of net asset value</span>
+        <span><i style="background:#123a5e"></i>Gross exposure (long market value ÷ NAV)</span>
+      </div>
+      <p class="readout" id="cashRead"></p>
     </div>
-    <div class="table-wrap">
-      <table class="dtable" id="txTable">
-        <thead><tr>
-          <th>Date</th><th>Name</th><th>Ticker</th><th>Action</th><th class="n">Quantity</th>
-          <th class="n">Price</th><th class="n">Fees</th><th class="n">Cash Flow</th>
-        </tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <div class="kpis three" id="expKpis" style="margin-top:22px"></div>
+    <p class="sect-note" id="cashNote"></p>
   </div>
 </section>
-</div><!-- /tab-transactions -->
 
-<div id="tab-analysis" hidden>
+<!-- ============================ INCOME ============================
+     Moved here from the Analysis tab on 14 Aug 2026: dividend and interest
+     income is a property of what the book HOLDS, not of the track record, and
+     it belongs beside the positions that generate it.
 
-<!-- ============================ 3. INCOME ============================
      Restored 2026-08-14 per James: the full-history income record
      (income_history.csv, pre-inception + model era, back to 2020-05-26 -
      NOT January 2020, see the note in the income() function) is now good
      enough to publish. Reads income_history.csv, not income.csv, so this
      covers dividends across the whole record, not just the model book. -->
-<section class="section">
-  <div class="wrap">
+<section class="band">
+  <div class="wrap section">
     <h2 style="margin-top:0">Income</h2>
     <div class="kpis three" id="incKpis"></div>
     <div class="allocs split" style="margin-top:26px">
@@ -296,7 +444,102 @@
   </div>
 </section>
 
-<!-- ============================ 4. PERIOD RETURNS ============================ -->
+</div><!-- /tab-portfolio -->
+
+<div id="tab-activity" role="tabpanel" aria-labelledby="tabbtn-activity" tabindex="0" hidden>
+<section class="section" style="padding-top:14px">
+  <div class="wrap">
+    <h2 style="margin-top:0">Transactions</h2>
+    <!-- Two different row counts appear on this page and they are not an
+         error. The as-of strip states the MODEL BOOK's transaction count
+         (meta.transaction_count), which is what drives net asset value. This
+         table shows the FULL published ledger, which additionally carries the
+         itemised 2020–2023 record that predates the model book and is
+         published for disclosure only. The era column, already present in
+         transactions.csv and never surfaced until now, says which is which. -->
+    <p class="sect-note" id="txIntro" style="margin:0 0 4px"></p>
+    <div class="toolbar">
+      <label class="sr-only" for="txSearch"></label>
+      <input type="search" id="txSearch" placeholder="Search ticker or name…" aria-label="Search transactions by ticker or name">
+      <select id="txEra" aria-label="Filter by ledger era"></select>
+      <select id="txAction" aria-label="Filter by action">
+        <option value="">All actions</option>
+      </select>
+      <input type="date" id="txFrom" aria-label="Show transactions on or after this date">
+      <input type="date" id="txTo" aria-label="Show transactions on or before this date">
+      <button class="tabbtn" id="txReset" type="button">Reset</button>
+      <span class="count" id="txCount"></span>
+    </div>
+    <div class="table-wrap">
+      <table class="dtable" id="txTable">
+        <thead><tr>
+          <th class="sortable" data-sort="date" scope="col">Date<span class="ar">▼</span></th>
+          <th class="sortable" data-sort="name" scope="col">Name<span class="ar">▼</span></th>
+          <th class="sortable" data-sort="ticker" scope="col">Ticker<span class="ar">▼</span></th>
+          <th class="sortable" data-sort="action" scope="col">Action<span class="ar">▼</span></th>
+          <th class="n sortable" data-sort="quantity" scope="col">Quantity<span class="ar">▼</span></th>
+          <th class="n sortable" data-sort="price" scope="col">Price<span class="ar">▼</span></th>
+          <th class="n sortable" data-sort="fees" scope="col">Fees<span class="ar">▼</span></th>
+          <th class="n sortable" data-sort="cash_flow" scope="col">Cash Flow<span class="ar">▼</span></th>
+          <th scope="col">Ledger</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="pager" id="txPager"></div>
+  </div>
+</section>
+
+<!-- ==================== 8. CLOSED POSITIONS ====================
+     Moved here from Analysis and re-ordered on 14 Aug 2026. The distribution
+     comes FIRST: a summary of all 184 closed round trips reads as evidence,
+     whereas a top-ten list on its own reads as selection. The best and worst
+     ten sit underneath it, where they illustrate the distribution instead of
+     standing in for it. -->
+<section class="band">
+  <div class="wrap section">
+    <h2 style="margin-top:0">Closed positions</h2>
+    <p class="sect-note" style="margin:0 0 4px" id="tradeIntro"></p>
+    <div class="stats" id="tradeStats"></div>
+    <div class="stats" id="tradeStats2" style="margin-top:0;border-top:0"></div>
+    <h3 style="margin-top:2em">The ten best and the ten worst</h3>
+    <p class="sect-note" style="margin:0 0 4px">Shown after the distribution above,
+      not instead of it.</p>
+    <div class="allocs two">
+      <div class="alloc"><h3>Best, by total return</h3>
+        <div class="table-wrap" style="margin-top:0"><table class="dtable tradeT" id="bestT" style="min-width:0">
+          <thead><tr><th>Ticker</th><th>Held</th><th class="n">Total return</th><th class="n">Gain</th></tr></thead><tbody></tbody></table></div>
+      </div>
+      <div class="alloc"><h3>Worst, by total return</h3>
+        <div class="table-wrap" style="margin-top:0"><table class="dtable tradeT" id="worstT" style="min-width:0">
+          <thead><tr><th>Ticker</th><th>Held</th><th class="n">Total return</th><th class="n">Loss</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+  </div>
+</section>
+</div><!-- /tab-activity -->
+
+<div id="tab-performance" role="tabpanel" aria-labelledby="tabbtn-performance" tabindex="0">
+
+<!-- ==================== 1. THE THREE-TEST SCORECARD ====================
+     Added 14 Aug 2026, and deliberately placed above everything else. The
+     prospectus sets three objectives; until now the page published the raw
+     material for judging them and left the judging to the reader. Each test
+     names its benchmark, states its verdict, and shows the two numbers the
+     verdict rests on — before any table. -->
+<section class="section" style="padding-top:14px">
+  <div class="wrap">
+    <h2 style="margin-top:0">Does the strategy do what it says?</h2>
+    <p class="sect-note" style="margin:0 0 16px;max-width:80ch">Three objectives, three
+      tests, measured over the whole record from 31 December 2018. Each is scored against
+      the benchmark the strategy assigns to it — not against whichever comparison happens
+      to flatter it. The definitions of the three benchmarks are directly below.</p>
+    <div class="score" id="scorecard"></div>
+    <p class="sect-note" id="scoreNote"></p>
+  </div>
+</section>
+
+<!-- ============================ PERIOD RETURNS ============================ -->
 <section class="band">
   <div class="wrap section">
     <h2 style="margin-top:0">Performance</h2>
@@ -351,10 +594,41 @@
         <tbody></tbody>
       </table>
     </div>
+
+    <!-- ==================== 2. CALENDAR-YEAR RETURNS ====================
+         Added 14 Aug 2026. Trailing-period returns hide the shape of a record;
+         year by year shows it. 2022 is the single strongest piece of evidence
+         here — and 2021, 2024 and 2025 are the weakest. All eight years are
+         drawn at the same visual weight, in the same colours, with no
+         emphasis on the good ones. -->
+    <h3 style="margin-top:2em">Year by year</h3>
+    <p class="sect-note" style="margin:0 0 8px">Every calendar year since inception, on
+      the same basis. The lagging years are shown exactly as prominently as the leading
+      ones.</p>
+    <div class="minichart">
+      <svg class="chart2" id="cyChart" viewBox="0 0 960 330" role="img" aria-label="Calendar-year total returns, portfolio against the 60/40 benchmark and the S&amp;P 500"></svg>
+      <div class="legend">
+        <span><i style="background:#123a5e"></i>Portfolio</span>
+        <span><i style="background:#8b96a2"></i>60 / 40 (benchmark)</span>
+        <span><i style="background:#b5893f"></i>S&amp;P 500 (reference)</span>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="dtable" id="cyTable" style="min-width:520px">
+        <thead><tr>
+          <th>Year</th><th class="n">Portfolio</th>
+          <th class="n">60 / 40<br><span style="font-weight:400;text-transform:none;letter-spacing:0">benchmark</span></th>
+          <th class="n">S&amp;P 500<br><span style="font-weight:400;text-transform:none;letter-spacing:0">reference</span></th>
+          <th class="n">vs 60 / 40</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="sect-note" id="cyNote"></p>
   </div>
 </section>
 
-<!-- ============================ 5. LONG-TERM SERIES ============================ -->
+<!-- ============================ LONG-TERM SERIES ============================ -->
 <section class="section">
   <div class="wrap">
     <h2 style="margin-top:0">Long-term series</h2>
@@ -365,20 +639,52 @@
           <button class="tabbtn" id="logBtn" type="button">Log scale</button>
         </div>
       </div>
-      <svg class="chart" id="curve" viewBox="0 0 960 400" preserveAspectRatio="none" role="img" aria-label="Portfolio value against the S&amp;P 500 and a 60/40 benchmark"></svg>
+      <svg class="chart" id="curve" viewBox="0 0 960 400" preserveAspectRatio="none" role="img" aria-label="Portfolio value against the S&amp;P 500, a 60/40 benchmark and the absolute-return hurdle"></svg>
+      <!-- The S&P was drawn in #c0392b — the same red this page uses for
+           losses — and on the default view it sits ABOVE the portfolio line,
+           so the eye read the strongest series as the alarming one. It is now
+           a muted amber, and red is reserved for negative numbers. -->
       <div class="legend">
         <span><i style="background:#123a5e"></i>Portfolio</span>
-        <span><i style="background:#c0392b"></i>S&amp;P 500 (SPY, total return)</span>
-        <span><i style="background:#8b96a2"></i>60 / 40 (AOR, total return)</span>
+        <span><i style="background:#8b96a2"></i>60 / 40 (AOR, total return) — benchmark</span>
+        <span><i style="background:#b5893f"></i>S&amp;P 500 (SPY, total return) — reference</span>
+        <span><i style="background:#5c7d6a"></i>T-bills + 4.5% real — absolute bar</span>
       </div>
       <p class="readout" id="curveRead"></p>
       <p class="sect-note" id="curveNote"></p>
+    </div>
+
+    <!-- ==================== 5. UNDERWATER CHART ====================
+         Added 14 Aug 2026. Drawdown is the headline objective of this strategy
+         and it was represented on the page by a single table cell. This draws
+         it on the SAME time axis as the curve above, so the two read together.
+         Computed on the page from the published curve — a running-peak scan,
+         no methodology choice, nothing to keep in sync. -->
+    <div class="minichart" style="margin-top:16px">
+      <h3>Underwater</h3>
+      <p class="chart-sub">How far below its own previous high the portfolio was, on every
+        day of the record. The flat line at zero is a new high; the depth of each trough is
+        what a holder would actually have lived through. The S&amp;P is drawn behind it for
+        scale.</p>
+      <svg class="chart2" id="ddChart" viewBox="0 0 960 260" role="img" aria-label="Drawdown from previous peak, portfolio against the S&amp;P 500"></svg>
+      <div class="legend">
+        <span><i style="background:#123a5e"></i>Portfolio</span>
+        <span><i style="background:#b5893f"></i>S&amp;P 500 (reference)</span>
+      </div>
+      <p class="readout" id="ddRead"></p>
     </div>
 
     <h2>Performance during major market declines</h2>
     <p class="sect-note" style="margin:0 0 4px">Downside protection is the headline objective,
       and this is the test of it. The windows are defined by the S&amp;P 500's own declines —
       the one job the index does on this page.</p>
+
+    <!-- ==================== 7. EPISODES AS SMALL MULTIPLES ====================
+         One panel per decline, identical axes, index in grey, portfolio in
+         navy. A reader sees the shape of every episode at once instead of
+         parsing eight rows of signed percentages. The table stays underneath
+         for the exact figures. -->
+    <div class="smalls" id="epSmalls"></div>
     <div class="table-wrap">
       <table class="dtable" id="epTable" style="min-width:640px">
         <thead><tr>
@@ -395,6 +701,21 @@
       so an episode marked here at just under 10% is a 10% correction on the intraday
       convention many readers will have in mind.</p>
 
+    <!-- ==================== 4. ROLLING CORRELATION ====================
+         Added 14 Aug 2026. The mandate is to be uncorrelated. A single
+         full-period correlation cannot show whether that held WHEN IT
+         MATTERED; this can, and almost nobody publishes it. -->
+    <h2>Correlation to the S&amp;P 500, through time</h2>
+    <p class="sect-note" style="margin:0 0 4px">Being uncorrelated is the point of the
+      strategy, and one average number cannot show whether that held when it mattered.
+      This is the correlation of the portfolio's returns to the index's, measured over a
+      trailing twelve months, at every point in the record.</p>
+    <div class="minichart">
+      <svg class="chart2" id="corrChart" viewBox="0 0 960 280" role="img" aria-label="Rolling twelve-month correlation of the portfolio to the S&amp;P 500"></svg>
+      <p class="readout" id="corrRead"></p>
+      <p class="sect-note" id="corrNote"></p>
+    </div>
+
     <h2>Risk statistics</h2>
     <div class="table-wrap">
       <table class="dtable" id="riskTable" style="min-width:520px">
@@ -403,31 +724,34 @@
       </table>
     </div>
 
-    <h2>Closed positions</h2>
-    <div class="chart-ctl" style="margin-bottom:8px">
-      <div class="grp"><span class="muted" style="font-size:12.5px" id="tradeCount"></span></div>
-    </div>
-    <div class="allocs two">
-      <div class="alloc"><h3>Best, by total return</h3>
-        <div class="table-wrap" style="margin-top:0"><table class="dtable tradeT" id="bestT" style="min-width:0">
-          <thead><tr><th>Ticker</th><th>Held</th><th class="n">Total return</th><th class="n">Gain</th></tr></thead><tbody></tbody></table></div>
-      </div>
-      <div class="alloc"><h3>Worst, by total return</h3>
-        <div class="table-wrap" style="margin-top:0"><table class="dtable tradeT" id="worstT" style="min-width:0">
-          <thead><tr><th>Ticker</th><th>Held</th><th class="n">Total return</th><th class="n">Loss</th></tr></thead><tbody></tbody></table></div>
-      </div>
-    </div>
+    <!-- ==================== 9. PROGRESSIVE DISCLOSURE ====================
+         Every statistic above carries a one-line plain-English gloss. The
+         methodology behind them — sampling cadence, which benchmark plays
+         which role, how beta and capture are actually measured — belongs on
+         the page but not in front of a reader who did not ask for it. -->
+    <details class="method">
+      <summary>How these statistics are measured</summary>
+      <div class="body" id="riskMethod"></div>
+    </details>
   </div>
 </section>
 
-</div><!-- /tab-analysis -->
+</div><!-- /tab-performance -->
 
 <!-- ============================ PROVENANCE ============================
      Shown on every tab. States where each block of figures comes from and the
      date each is good as of. Do not remove without removing the prov() call. -->
-<section class="section" style="padding-top:0">
+<section class="section" id="provSection" style="padding-top:0">
   <div class="wrap">
     <div class="notice info"><b>Provenance</b><span id="provText"></span></div>
+    <!-- The feed is public CSV. Offering it directly is cheap credibility that
+         almost nobody extends, and it lets a reader check any figure here
+         against the file it came from. -->
+    <h3 style="margin-top:1.6em;font-size:15px">Download the underlying data</h3>
+    <p class="sect-note" style="margin:0 0 6px">Every figure on this page comes from these
+      files. They are public, they are what the page itself reads, and they update whenever
+      the record does.</p>
+    <div class="dl" id="dlLinks"></div>
   </div>
 </section>
 
@@ -605,14 +929,56 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     })
     .catch(function (e) { fail(e.message || String(e)); });
 
-  /* ------------------------------- tab switching --------------------------- */
+  /* ------------------------------- tab switching ---------------------------
+     Three things this now does that it did not before:
+       1. The tab is in the URL hash, so a section can be linked to and a
+          reload keeps you where you were. This page gets forwarded; landing
+          on the wrong tab wastes the recipient's first ten seconds.
+       2. Proper tablist semantics — role, aria-selected, roving tabindex and
+          arrow-key navigation — so it is usable without a mouse.
+       3. Panels stay in the DOM and are only hidden, so every chart is drawn
+          once at load. That is safe here because all of them are laid out in
+          SVG user units against a viewBox and none measures a pixel width —
+          an SVG inside a hidden container reports a width of zero, which is
+          what silently breaks charts built the other way. */
+  var TABS = ['performance', 'portfolio', 'activity'];
+
+  function showTab(tab, push) {
+    if (TABS.indexOf(tab) < 0) tab = TABS[0];
+    TABS.forEach(function (t) {
+      var panel = el('tab-' + t), btn = el('tabbtn-' + t);
+      if (!panel || !btn) return;
+      var on = (t === tab);
+      panel.hidden = !on;
+      btn.classList.toggle('on', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+      btn.tabIndex = on ? 0 : -1;
+    });
+    if (push && window.location.hash !== '#' + tab) {
+      try { history.replaceState(null, '', '#' + tab); }
+      catch (err) { window.location.hash = tab; }
+    }
+  }
+
   el('pfTabs').addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
-    var tab = b.dataset.tab;
-    ['portfolio', 'transactions', 'analysis'].forEach(function (t) {
-      el('tab-' + t).hidden = (t !== tab);
-    });
-    [].forEach.call(this.querySelectorAll('button'), function (x) { x.classList.toggle('on', x === b); });
+    showTab(b.dataset.tab, true);
+  });
+  el('pfTabs').addEventListener('keydown', function (e) {
+    var i = TABS.indexOf((e.target.dataset || {}).tab);
+    if (i < 0) return;
+    var j = null;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') j = (i + 1) % TABS.length;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') j = (i - 1 + TABS.length) % TABS.length;
+    else if (e.key === 'Home') j = 0;
+    else if (e.key === 'End') j = TABS.length - 1;
+    if (j === null) return;
+    e.preventDefault();
+    showTab(TABS[j], true);
+    el('tabbtn-' + TABS[j]).focus();
+  });
+  window.addEventListener('hashchange', function () {
+    showTab((window.location.hash || '').replace('#', ''), false);
   });
 
   /* ------------------------------- rendering ------------------------------ */
@@ -647,35 +1013,515 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     kpis(D, nav, cash, cashW, P, mv, basis);
     positions(P, S, mv, basis, cash, cashW, nav);
     allocation(P, S, cash, nav);
-    transactions(TX);
+    transactions(TX, M, S);
     income(IH, M);
+    scorecard(S);
     book(D, M, S);
     periods(S);
+    calendarYears(S);
     curve(S);
+    underwater(S);
     episodes(S);
+    episodeSmalls(S);
+    rollingCorr(S);
     risk(S);
-    trades(S);
+    riskMethod(S);
+    cashChart(S);
+    trades(S, P, nav);
     prov(M, S);
+    downloads();
+
+    /* The hash is applied only after everything above has rendered, so the
+       panel that gets shown is complete when it appears. */
+    showTab((window.location.hash || '').replace('#', ''), false);
+  }
+
+  /* ===================== shared SVG chart plumbing =========================
+     Three of the new charts need the same handful of primitives. They are
+     defined once here rather than three times, and they all take a viewBox in
+     user units so the SVG scales with the container and nothing depends on a
+     measured pixel width — which is what breaks charts drawn inside a hidden
+     tab panel. ====================================================== */
+  var SANS = '-apple-system,Segoe UI,Roboto,sans-serif';
+  var C_PF = '#123a5e', C_BM = '#8b96a2', C_IX = '#b5893f', C_HURDLE = '#5c7d6a';
+  /* toFixed() emits an ASCII hyphen. Everything else on this page uses a true
+     minus sign, and a chart axis reading "-20%" beside a table reading "−20%"
+     is the kind of small inconsistency that makes a reader wonder what else
+     was not checked. */
+  function fx(v, dp) { return v.toFixed(dp === undefined ? 2 : dp).replace('-', MINUS); }
+
+  function svgText(x, y, s, opts) {
+    opts = opts || {};
+    return '<text x="' + x + '" y="' + y + '" font-size="' + (opts.size || 11) +
+      '" fill="' + (opts.fill || '#8b96a2') + '" font-family="' + SANS + '"' +
+      (opts.anchor ? ' text-anchor="' + opts.anchor + '"' : '') +
+      (opts.weight ? ' font-weight="' + opts.weight + '"' : '') + '>' + esc(s) + '</text>';
+  }
+  function hline(x1, x2, y, color, w, dash) {
+    return '<line x1="' + x1 + '" y1="' + y + '" x2="' + x2 + '" y2="' + y +
+      '" stroke="' + (color || '#e3e7eb') + '" stroke-width="' + (w || 1) + '"' +
+      (dash ? ' stroke-dasharray="' + dash + '"' : '') + '/>';
+  }
+  function poly(pts, color, w, dash) {
+    return '<polyline fill="none" stroke="' + color + '" stroke-width="' + w +
+      '" stroke-linejoin="round" stroke-linecap="round"' +
+      (dash ? ' stroke-dasharray="' + dash + '"' : '') + ' points="' + pts + '"/>';
+  }
+  /* Running-peak drawdown. No methodology choice in it, so it is computed here
+     from the published curve rather than duplicated into the feed. */
+  function drawdownOf(vals) {
+    var peak = -Infinity;
+    return vals.map(function (v) { peak = Math.max(peak, v); return v / peak - 1; });
+  }
+
+  /* --- 1. the three-test scorecard ---------------------------------------- */
+  function scorecard(S) {
+    var x = S.extras || {};
+    if (!x.scorecard) { el('scorecard').innerHTML = ''; return; }
+    el('scorecard').innerHTML = x.scorecard.map(function (t) {
+      var isDD = t.test === 'Downside protection';
+      return '<div class="sc ' + (t.pass ? 'pass' : 'failv') + '">' +
+        '<span class="t">' + esc(t.role) + '</span>' +
+        '<span class="q">' + esc(t.question) + '</span>' +
+        '<span class="verdict">' + (t.pass ? 'Passed' : 'Not met') + '</span>' +
+        '<span class="fig">' + signPct(t.value) + '</span>' +
+        '<span class="vs">' + (isDD ? 'deepest fall, against <b>' : 'against <b>') +
+          signPct(t.bar) + '</b><br>' + esc(t.benchmark) + '</span>' +
+        '<span class="gap">' + (isDD ? 'Shallower by <b>' : 'Ahead by <b>') +
+          Math.abs(t.gap * 100).toFixed(1) + ' points</b></span>' +
+      '</div>';
+    }).join('');
+    el('scoreNote').innerHTML =
+      'Measured from ' + longDate(S.curve.dates[0]) + ' to <b>' + longDate(S.series_through) +
+      '</b>. The absolute bar compounds the realised 3-month Treasury-bill yield day by day ' +
+      'and adds 4.5% a year on top; over this window that is a cumulative ' +
+      signPct(x.scorecard[1].bar) + ' to beat, of which ' + signPct(x.tbill_total) +
+      ' is the T-bill itself. Stating the bar in nominal terms is the same test as stating ' +
+      'it in real terms — the portfolio and the bar are both deflated by the same inflation, ' +
+      'so it cancels, and no separate price index is involved. ' +
+      'Passing all three does not make the next eight years look like the last eight.';
+  }
+
+  /* --- 2. calendar-year returns ------------------------------------------- */
+  function calendarYears(S) {
+    var rows = ((S.extras || {}).calendar_years) || [];
+    if (!rows.length) return;
+
+    el('cyTable').querySelector('tbody').innerHTML = rows.map(function (r) {
+      var vs = r.trs - r.aor;
+      return '<tr><td class="m">' + r.year + (r.partial ? ' <span class="era">part year</span>' : '') + '</td>' +
+        '<td class="n ' + cls(r.trs) + '">' + signPct(r.trs) + '</td>' +
+        '<td class="n ' + cls(r.aor) + '">' + signPct(r.aor) + '</td>' +
+        '<td class="n ' + cls(r.spy) + '">' + signPct(r.spy) + '</td>' +
+        '<td class="n ' + cls(vs) + (vs > 0 ? ' outperform' : '') + '">' + signPct(vs) +
+          (vs > 0 ? '<span class="tri">▲</span>' : '') + '</td></tr>';
+    }).join('');
+
+    /* Grouped bars, one group per year, three bars per group, all years drawn
+       identically. No year is highlighted, shaded or annotated — 2022 carries
+       itself and the weak years are not softened. */
+    var W = 960, H = 330, mL = 46, mR = 10, mT = 14, mB = 40;
+    var pw = W - mL - mR, ph = H - mT - mB;
+    var series = [{ k: 'trs', c: C_PF }, { k: 'aor', c: C_BM }, { k: 'spy', c: C_IX }];
+    var all = [];
+    rows.forEach(function (r) { series.forEach(function (s) { all.push(r[s.k]); }); });
+    var lo = Math.min.apply(null, all.concat([0])), hi = Math.max.apply(null, all.concat([0]));
+    var pad = (hi - lo) * 0.08 || 0.02;
+    lo -= pad; hi += pad;
+    var y = function (v) { return mT + ph - ph * (v - lo) / (hi - lo); };
+
+    var g = '';
+    var step = 0.05;
+    if (hi - lo > 0.6) step = 0.10;
+    for (var t = Math.ceil(lo / step) * step; t <= hi + 1e-9; t += step) {
+      var v = Math.round(t * 1000) / 1000;
+      g += hline(mL, W - mR, y(v).toFixed(1), v === 0 ? '#b9c2cb' : '#eef1f4', v === 0 ? 1.4 : 1);
+      g += svgText(mL - 7, y(v) + 4, fx(v * 100, 0) + '%', { anchor: 'end' });
+    }
+    var gw = pw / rows.length, bw = Math.min(20, (gw - 14) / 3);
+    rows.forEach(function (r, i) {
+      var cx = mL + gw * i + gw / 2;
+      series.forEach(function (s, k) {
+        var v = r[s.k], y0 = y(0), y1 = y(v);
+        var bx = cx - (bw * 3 + 6) / 2 + k * (bw + 3);
+        g += '<rect x="' + bx.toFixed(1) + '" y="' + Math.min(y0, y1).toFixed(1) +
+             '" width="' + bw.toFixed(1) + '" height="' + Math.max(1.5, Math.abs(y1 - y0)).toFixed(1) +
+             '" fill="' + s.c + '" rx="1.5"><title>' + r.year + ' ' +
+             ({ trs: 'Portfolio', aor: '60/40', spy: 'S&P 500' })[s.k] + ' ' + signPct(v) + '</title></rect>';
+      });
+      g += svgText(cx, H - 20, String(r.year), { anchor: 'middle', size: 12, fill: '#64717f' });
+      g += svgText(cx, H - 6, signPct(r.trs, 0), { anchor: 'middle', size: 10.5, fill: C_PF, weight: 700 });
+    });
+    el('cyChart').innerHTML = g;
+
+    var wins = rows.filter(function (r) { return r.trs > r.aor; }).length;
+    var last = rows[rows.length - 1];
+    el('cyNote').innerHTML =
+      'The portfolio beat the 60/40 benchmark in ' + wins + ' of ' + rows.length +
+      ' calendar years, and beat the S&amp;P 500 in ' +
+      rows.filter(function (r) { return r.trs > r.spy; }).length + '. ' +
+      'It lagged both in ' + rows.filter(function (r) { return r.trs < r.aor && r.trs < r.spy; })
+        .map(function (r) { return r.year; }).join(', ') + '. ' +
+      'Each year runs from the last observation on or before 31 December of the prior year ' +
+      'to the last on or before 31 December of the year itself; on the stretch of the record ' +
+      'sampled monthly a boundary can fall on a month-end a few days either side of the ' +
+      'calendar date. ' + last.year + ' is a part year, through ' + longDate(last.exact_end) + '.';
+  }
+
+  /* --- 5. underwater ------------------------------------------------------ */
+  function underwater(S) {
+    var c = S.curve;
+    var dtrs = drawdownOf(c.trs), dspy = drawdownOf(c.spy);
+    var W = 960, H = 260, mL = 46, mR = 10, mT = 12, mB = 26;
+    var pw = W - mL - mR, ph = H - mT - mB;
+    var lo = Math.min(Math.min.apply(null, dtrs), Math.min.apply(null, dspy));
+    lo = Math.min(lo * 1.06, -0.05);
+    var t0 = d(c.dates[0]), t1 = d(c.dates[c.dates.length - 1]), tspan = (t1 - t0) || 1;
+    var xAt = function (ms) { return mL + pw * (ms - t0) / tspan; };
+    var y = function (v) { return mT + ph * (v / lo); };
+
+    var g = '', step = lo < -0.30 ? 0.10 : 0.05;
+    for (var v = 0; v >= lo; v -= step) {
+      var vv = Math.round(v * 1000) / 1000;
+      g += hline(mL, W - mR, y(vv).toFixed(1), vv === 0 ? '#b9c2cb' : '#eef1f4', vv === 0 ? 1.4 : 1);
+      g += svgText(mL - 7, y(vv) + 4, fx(vv * 100, 0) + '%', { anchor: 'end' });
+    }
+    function line(vals, color, w) {
+      return poly(vals.map(function (v, i) {
+        return xAt(d(c.dates[i])).toFixed(1) + ',' + y(v).toFixed(1);
+      }).join(' '), color, w);
+    }
+    g += line(dspy, C_IX, 1.3);
+    g += line(dtrs, C_PF, 2);
+    var y0 = new Date(t0).getUTCFullYear(), y1 = new Date(t1).getUTCFullYear();
+    for (var yy = y0 + 1; yy <= y1; yy++) {
+      g += svgText(xAt(Date.UTC(yy, 0, 1)), H - 7, String(yy), { anchor: 'middle' });
+    }
+    el('ddChart').innerHTML = g;
+
+    var worst = Math.min.apply(null, dtrs);
+    var worstD = c.dates[dtrs.indexOf(worst)];
+    var sWorst = Math.min.apply(null, dspy);
+    el('ddRead').innerHTML =
+      'Deepest fall: <b>' + signPct(worst) + '</b> on ' + longDate(worstD) +
+      ' &nbsp;·&nbsp; S&amp;P 500 over the same record: <b>' + signPct(sWorst) + '</b>' +
+      ' &nbsp;·&nbsp; at a new high on <b>' +
+      pct(dtrs.filter(function (v) { return v > -0.0001; }).length / dtrs.length, 0) +
+      '</b> of observations.';
+  }
+
+  /* --- 4. rolling twelve-month correlation -------------------------------- */
+  function rollingCorr(S) {
+    var rc = (S.extras || {}).rolling_corr;
+    if (!rc || !rc.corr || !rc.corr.length) return;
+    var dates = rc.dates ||
+      S.curve.dates.slice(rc.start_index, rc.start_index + rc.corr.length);
+    var W = 960, H = 280, mL = 46, mR = 10, mT = 12, mB = 26;
+    var pw = W - mL - mR, ph = H - mT - mB;
+    var t0 = d(dates[0]), t1 = d(dates[dates.length - 1]), tspan = (t1 - t0) || 1;
+    var xAt = function (ms) { return mL + pw * (ms - t0) / tspan; };
+    var y = function (v) { return mT + ph - ph * (v + 1) / 2; };
+
+    var g = '';
+    [-1, -0.5, 0, 0.5, 1].forEach(function (v) {
+      g += hline(mL, W - mR, y(v).toFixed(1), v === 0 ? '#b9c2cb' : '#eef1f4', v === 0 ? 1.4 : 1);
+      g += svgText(mL - 7, y(v) + 4, fx(v, 1), { anchor: 'end' });
+    });
+    // The full-period correlation, for scale.
+    var full = (S.extras.capture || {}).corr;
+    if (full !== undefined && full !== null) {
+      g += hline(mL, W - mR, y(full).toFixed(1), '#c9a94e', 1.2, '5 4');
+      g += svgText(W - mR - 4, y(full) - 6, 'whole-period average ' + fx(full),
+                   { anchor: 'end', fill: '#a98a34', size: 10.5 });
+    }
+    g += poly(rc.corr.map(function (v, i) {
+      return xAt(d(dates[i])).toFixed(1) + ',' + y(v).toFixed(1);
+    }).join(' '), C_PF, 1.8);
+    var y0 = new Date(t0).getUTCFullYear(), y1 = new Date(t1).getUTCFullYear();
+    for (var yy = y0 + 1; yy <= y1; yy++) {
+      g += svgText(xAt(Date.UTC(yy, 0, 1)), H - 7, String(yy), { anchor: 'middle' });
+    }
+    el('corrChart').innerHTML = g;
+
+    var mx = Math.max.apply(null, rc.corr), mn = Math.min.apply(null, rc.corr);
+    el('corrRead').innerHTML =
+      'Range over the record: <b>' + fx(mn) + '</b> to <b>' + fx(mx) +
+      '</b>. Whole-period correlation <b>' + (full === undefined ? '—' : fx(full, 3)) +
+      '</b>, which explains <b>' + pct((S.extras.capture || {}).r2, 1) +
+      '</b> of the portfolio’s variation.';
+    el('corrNote').textContent =
+      'Correlation of the two series’ returns over a trailing ' + rc.months +
+      ' months, computed on matched observation dates, at every point with at least ' +
+      rc.min_obs + ' paired observations. One limitation worth knowing: the record is not ' +
+      'sampled at a uniform interval, so a window falling inside the monthly stretch ' +
+      '(31 May 2022 to 30 November 2023) is a correlation of monthly returns while the ' +
+      'windows either side are correlations of daily returns. Those are not the same ' +
+      'statistic, and the coarse windows rest on about a dozen observations each.';
+  }
+
+  /* --- 6. cash and exposure through time ---------------------------------- */
+  function cashChart(S) {
+    var cs = (S.extras || {}).cash;
+    if (!cs || !cs.dates || !cs.dates.length) return;
+    var W = 960, H = 300, mL = 46, mR = 10, mT = 12, mB = 26;
+    var pw = W - mL - mR, ph = H - mT - mB;
+    var vals = cs.cash_weight.concat(cs.gross_exposure).filter(function (v) { return v !== null; });
+    var lo = Math.min.apply(null, vals.concat([0])), hi = Math.max.apply(null, vals.concat([1]));
+    var pad = (hi - lo) * 0.06; lo -= pad; hi += pad;
+    var t0 = d(cs.dates[0]), t1 = d(cs.dates[cs.dates.length - 1]), tspan = (t1 - t0) || 1;
+    var xAt = function (ms) { return mL + pw * (ms - t0) / tspan; };
+    var y = function (v) { return mT + ph - ph * (v - lo) / (hi - lo); };
+
+    var g = '';
+    for (var v = Math.ceil(lo / 0.25) * 0.25; v <= hi; v += 0.25) {
+      var vv = Math.round(v * 100) / 100;
+      g += hline(mL, W - mR, y(vv).toFixed(1), vv === 0 ? '#b9c2cb' : '#eef1f4', vv === 0 ? 1.4 : 1);
+      g += svgText(mL - 7, y(vv) + 4, fx(vv * 100, 0) + '%', { anchor: 'end' });
+    }
+    g += hline(mL, W - mR, y(1).toFixed(1), '#cdd6de', 1, '4 4');
+    function line(arr, color, w) {
+      return poly(arr.map(function (val, i) {
+        return val === null ? null : xAt(d(cs.dates[i])).toFixed(1) + ',' + y(val).toFixed(1);
+      }).filter(Boolean).join(' '), color, w);
+    }
+    g += line(cs.gross_exposure, C_PF, 1.8);
+    g += line(cs.cash_weight, '#c9a94e', 1.8);
+    var y0 = new Date(t0).getUTCFullYear(), y1 = new Date(t1).getUTCFullYear();
+    for (var yy = y0 + 1; yy <= y1; yy++) {
+      g += svgText(xAt(Date.UTC(yy, 0, 1)), H - 7, String(yy), { anchor: 'middle' });
+    }
+    el('cashChart').innerHTML = g;
+
+    el('cashRead').innerHTML =
+      'Cash has ranged from <b>' + signPct(cs.min_cash_weight) + '</b> to <b>' +
+      signPct(cs.max_cash_weight) + '</b> of net asset value. The dashed line at 100% is ' +
+      'fully invested with no borrowing.';
+
+    el('expKpis').innerHTML = [
+      ['Peak gross exposure', pct(cs.peak_gross_exposure), '',
+        'long positions ÷ NAV, ' + shortDate(cs.peak_gross_exposure_date)],
+      ['Most cash borrowed', money(Math.abs(cs.min_cash), 0), 'down',
+        pct(cs.peak_borrowing_pct_of_initial_capital) + ' of starting capital, ' +
+        shortDate(cs.min_cash_date)],
+      ['Days with a negative cash balance', String(cs.days_negative_cash), '',
+        'of ' + cs.days + ' in the model book']
+    ].map(function (r) {
+      return '<div class="kpi"><span class="k">' + esc(r[0]) + '</span><span class="v ' +
+        r[2] + '">' + esc(r[1]) + '</span><span class="s">' + esc(r[3]) + '</span></div>';
+    }).join('');
+
+    el('cashNote').innerHTML =
+      '<b>The book uses real leverage, and this is the page saying so.</b> Cash has gone ' +
+      'negative on ' + cs.days_negative_cash + ' of ' + cs.days + ' days in the model book, ' +
+      'reaching ' + signMoney(cs.min_cash) + ' on ' + longDate(cs.min_cash_date) + ' — a margin ' +
+      'debit equal to ' + pct(cs.peak_borrowing_pct_of_initial_capital) + ' of the capital the ' +
+      'model book started with. Gross exposure peaked at ' + pct(cs.peak_gross_exposure) +
+      ' of net asset value. Borrowed balances are charged the 3-month Treasury-bill yield ' +
+      'plus 100 basis points, so the cost of that leverage is already inside every return ' +
+      'figure on this page. ' +
+      'This chart covers ' + longDate(cs.from) + ' to ' + longDate(cs.to) + ' only: before ' +
+      'the model book began there is a net account value on record but no securities-versus-' +
+      'cash split behind it, and estimating one backwards would not be an observation.';
+  }
+
+  /* --- 7. decline episodes as small multiples ------------------------------ */
+  function episodeSmalls(S) {
+    var c = S.curve;
+    var rows = S.episodes.filter(function (e) { return e.trs !== null; });
+    var idx = {};
+    c.dates.forEach(function (dd, i) { idx[dd] = i; });
+    function windowOf(from, to) {
+      var i0 = null, i1 = null;
+      for (var i = 0; i < c.dates.length; i++) {
+        if (c.dates[i] <= from) i0 = i;
+        if (c.dates[i] <= to) i1 = i;
+      }
+      return (i0 === null || i1 === null || i1 <= i0) ? null : [i0, i1];
+    }
+    el('epSmalls').innerHTML = rows.map(function (e) {
+      var w = windowOf(e.peak, e.trough);
+      if (!w) return '';
+      var pf = c.trs.slice(w[0], w[1] + 1), ix = c.spy.slice(w[0], w[1] + 1);
+      var dts = c.dates.slice(w[0], w[1] + 1);
+      var pfR = pf.map(function (v) { return v / pf[0] - 1; });
+      var ixR = ix.map(function (v) { return v / ix[0] - 1; });
+      var W = 240, H = 92, mT = 6, mB = 6, mL = 2, mR = 2;
+      var ph = H - mT - mB, pw = W - mL - mR;
+      var all = pfR.concat(ixR);
+      var lo = Math.min.apply(null, all), hi = Math.max.apply(null, all);
+      var pad = (hi - lo) * 0.12 || 0.02; lo -= pad; hi += pad;
+      var t0 = d(dts[0]), t1 = d(dts[dts.length - 1]), tspan = (t1 - t0) || 1;
+      var xAt = function (i) { return mL + pw * (d(dts[i]) - t0) / tspan; };
+      var y = function (v) { return mT + ph - ph * (v - lo) / (hi - lo); };
+      function ln(arr, color, wd) {
+        return poly(arr.map(function (v, i) { return xAt(i).toFixed(1) + ',' + y(v).toFixed(1); }).join(' '), color, wd);
+      }
+      var g = hline(mL, W - mR, y(0).toFixed(1), '#e3e7eb', 1) + ln(ixR, '#b9c2cb', 1.4) + ln(pfR, C_PF, 2);
+      return '<div class="sm">' +
+        '<span class="nm">' + esc(e.name) + '</span>' +
+        '<span class="dt">' + shortDate(e.peak) + ' – ' + shortDate(e.trough) + '</span>' +
+        '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' +
+          esc(e.name) + ': portfolio ' + signPct(e.trs) + ', S&P 500 ' + signPct(e.spy) + '">' + g + '</svg>' +
+        '<div class="fig"><span class="idx">S&amp;P <b>' + signPct(e.spy) + '</b></span>' +
+        '<span class="pf">' + signPct(e.trs) + '</span></div>' +
+      '</div>';
+    }).join('');
+  }
+
+  /* --- download links ------------------------------------------------------ */
+  function downloads() {
+    var files = [
+      ['positions.csv', 'current holdings'],
+      ['transactions.csv', 'the full buy/sell ledger'],
+      ['income.csv', 'dividends, model book'],
+      ['income_history.csv', 'dividends, full history'],
+      ['dashboard.csv', 'headline figures'],
+      ['meta.csv', 'as-of dates and conventions'],
+      ['series.json', 'the long-term series and statistics']
+    ];
+    el('dlLinks').innerHTML = files.map(function (f) {
+      return '<a href="' + FEED + f[0] + '" download>' + esc(f[0]) + '</a> ' +
+             '<span class="muted" style="color:var(--faint)">' + esc(f[1]) + '</span>';
+    }).join('') +
+    '<a href="https://github.com/JamesKostohryz/trs-portfolio-feed" rel="noopener" target="_blank">the whole feed on GitHub</a>';
   }
 
   /* --- transactions -------------------------------------------------------
      Buys and sells only, straight from transactions.csv — the file itself
-     never contains dividends or deposits, so no filtering is needed. */
-  function transactions(TX) {
-    var list = TX.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
-    el('txTable').querySelector('tbody').innerHTML = list.map(function (t) {
-      var fees = num(t.fees);
-      var cf = num(t.cash_flow);
-      return '<tr><td>' + shortDate(t.date) + '</td>' +
+     never contains dividends or deposits, so no filtering is needed.
+
+     REBUILT 14 Aug 2026. This was 536 unpaginated, unsearchable, unsortable
+     rows: technically complete and practically unusable. It now has search, a
+     date range, an action filter, sortable headers and pagination — and it
+     exposes the `era` column, which has been in the CSV all along. Those 536
+     rows span TWO different books and were presented as one undifferentiated
+     ledger; the model book that actually drives net asset value is the
+     smaller part of it. */
+  var TXS = { rows: [], view: [], page: 0, per: 50, sort: 'date', dir: -1 };
+
+  function transactions(TX, M, S) {
+    TXS.rows = TX.map(function (t) {
+      return {
+        date: t.date, name: t.name, ticker: t.ticker, action: t.action,
+        era: t.era || '',
+        quantity: num(t.quantity), price: num(t.price),
+        fees: num(t.fees), cash_flow: num(t.cash_flow)
+      };
+    });
+
+    var eras = [], actions = [];
+    TXS.rows.forEach(function (r) {
+      if (r.era && eras.indexOf(r.era) < 0) eras.push(r.era);
+      if (r.action && actions.indexOf(r.action) < 0) actions.push(r.action);
+    });
+    eras.sort(); actions.sort();
+    el('txEra').innerHTML = '<option value="">All ledgers</option>' +
+      eras.map(function (e) {
+        return '<option value="' + esc(e) + '">' + esc(eraLabel(e)) + ' (' +
+          TXS.rows.filter(function (r) { return r.era === e; }).length + ')</option>';
+      }).join('');
+    el('txAction').innerHTML = '<option value="">All actions</option>' +
+      actions.map(function (a) { return '<option value="' + esc(a) + '">' + esc(a) + '</option>'; }).join('');
+
+    var modelCount = TXS.rows.filter(function (r) { return r.era !== 'pre-inception'; }).length;
+    el('txIntro').innerHTML =
+      'This is the full published ledger: <b>' + TXS.rows.length + '</b> buys and sells. ' +
+      'Of those, <b>' + modelCount + '</b> belong to the model book that began ' +
+      longDate(S.curve.model_start_date) + ' and drives every net-asset-value figure on this page; the ' +
+      'remaining <b>' + (TXS.rows.length - modelCount) + '</b> are the itemised 2020–2023 ' +
+      'record that predates it and are published for disclosure only. The as-of line at the ' +
+      'top of the page states the model-book count (' + (M.transaction_count || '—') + '); ' +
+      'this table states both. The Ledger column says which is which.';
+
+    ['txSearch', 'txEra', 'txAction', 'txFrom', 'txTo'].forEach(function (id) {
+      el(id).addEventListener('input', function () { TXS.page = 0; txRender(); });
+    });
+    el('txReset').addEventListener('click', function () {
+      ['txSearch', 'txEra', 'txAction', 'txFrom', 'txTo'].forEach(function (id) { el(id).value = ''; });
+      TXS.page = 0; TXS.sort = 'date'; TXS.dir = -1; txRender();
+    });
+    el('txTable').querySelector('thead').addEventListener('click', function (e) {
+      var th = e.target.closest('th.sortable'); if (!th) return;
+      var k = th.dataset.sort;
+      if (TXS.sort === k) TXS.dir = -TXS.dir;
+      else { TXS.sort = k; TXS.dir = (k === 'date' || k === 'quantity' || k === 'price' || k === 'cash_flow' || k === 'fees') ? -1 : 1; }
+      TXS.page = 0; txRender();
+    });
+    el('txPager').addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      TXS.page = +b.dataset.p; txRender();
+      el('txTable').scrollIntoView({ block: 'start' });
+    });
+
+    txRender();
+  }
+
+  function eraLabel(e) {
+    if (e === 'pre-inception') return 'Pre-inception 2020–2023';
+    if (e === 'model') return 'Model book';
+    return e || 'Unlabelled';
+  }
+
+  function txRender() {
+    var q = (el('txSearch').value || '').trim().toLowerCase();
+    var era = el('txEra').value, act = el('txAction').value;
+    var from = el('txFrom').value, to = el('txTo').value;
+
+    TXS.view = TXS.rows.filter(function (r) {
+      if (era && r.era !== era) return false;
+      if (act && r.action !== act) return false;
+      if (from && r.date < from) return false;
+      if (to && r.date > to) return false;
+      if (q && (r.ticker + ' ' + r.name).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+
+    var k = TXS.sort, dir = TXS.dir;
+    TXS.view.sort(function (a, b) {
+      var x = a[k], y = b[k];
+      if (x === null || x === undefined) x = -Infinity;
+      if (y === null || y === undefined) y = -Infinity;
+      if (typeof x === 'string') { x = x.toLowerCase(); y = String(y).toLowerCase(); }
+      return x < y ? -dir : (x > y ? dir : 0);
+    });
+
+    [].forEach.call(el('txTable').querySelectorAll('th.sortable'), function (th) {
+      if (th.dataset.sort === k) th.setAttribute('aria-sort', dir > 0 ? 'ascending' : 'descending');
+      else th.removeAttribute('aria-sort');
+      var ar = th.querySelector('.ar');
+      if (ar) ar.textContent = (th.dataset.sort === k && dir > 0) ? '▲' : '▼';
+    });
+
+    var pages = Math.max(1, Math.ceil(TXS.view.length / TXS.per));
+    if (TXS.page >= pages) TXS.page = pages - 1;
+    var slice = TXS.view.slice(TXS.page * TXS.per, (TXS.page + 1) * TXS.per);
+
+    el('txTable').querySelector('tbody').innerHTML = slice.length ? slice.map(function (t) {
+      return '<tr><td class="n" style="text-align:left">' + shortDate(t.date) + '</td>' +
         '<td class="m">' + esc(t.name) + '</td>' +
         '<td class="tk">' + esc(t.ticker) + '</td>' +
         '<td>' + esc(t.action) + '</td>' +
-        '<td class="n">' + f0.format(num(t.quantity)) + '</td>' +
-        '<td class="n">' + money(num(t.price)) + '</td>' +
-        '<td class="n">' + (fees ? money(fees) : '—') + '</td>' +
-        '<td class="n ' + cls(cf) + '">' + signMoney(cf) + '</td></tr>';
-    }).join('');
-    el('txCount').textContent = list.length + ' transactions';
+        '<td class="n">' + f0.format(t.quantity) + '</td>' +
+        '<td class="n">' + money(t.price) + '</td>' +
+        '<td class="n">' + (t.fees ? money(t.fees) : '—') + '</td>' +
+        '<td class="n ' + cls(t.cash_flow) + '">' + signMoney(t.cash_flow) + '</td>' +
+        '<td><span class="era' + (t.era === 'pre-inception' ? '' : ' model') + '">' +
+          esc(eraLabel(t.era)) + '</span></td></tr>';
+    }).join('') : '<tr><td colspan="9" class="muted">No transaction matches these filters.</td></tr>';
+
+    el('txCount').textContent = TXS.view.length === TXS.rows.length
+      ? TXS.rows.length + ' transactions'
+      : TXS.view.length + ' of ' + TXS.rows.length + ' transactions';
+
+    var out = '';
+    if (pages > 1) {
+      out += '<button type="button" data-p="' + (TXS.page - 1) + '"' + (TXS.page === 0 ? ' disabled' : '') + '>Previous</button>';
+      out += '<span>Page ' + (TXS.page + 1) + ' of ' + pages + '</span>';
+      out += '<button type="button" data-p="' + (TXS.page + 1) + '"' + (TXS.page >= pages - 1 ? ' disabled' : '') + '>Next</button>';
+      out += '<span style="margin-left:auto">Rows ' + (TXS.page * TXS.per + 1) + '–' +
+             Math.min((TXS.page + 1) * TXS.per, TXS.view.length) + '</span>';
+    }
+    el('txPager').innerHTML = out;
   }
 
   /* --- as-of strip ------------------------------------------------------- */
@@ -964,11 +1810,21 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     var S = CUR.S, c = S.curve;
     var i0 = startIndex(c.dates, CUR.range);
     var dates = c.dates.slice(i0);
+    /* Colour, corrected 14 Aug 2026. The S&P was drawn in the same red this
+       page uses for losses, and on the default view it sits above the
+       portfolio line, so the eye read the strongest series as a warning. It is
+       now muted amber; red means a negative number and nothing else. The
+       absolute-return hurdle is drawn as a thin dashed line so the absolute
+       test in the scorecard is visible rather than asserted. */
+    var hurdle = (S.extras && S.extras.hurdle) ? S.extras.hurdle.slice(i0) : null;
     var sets = [
       { name: 'Portfolio', color: NAVY, w: 2.4, v: c.trs.slice(i0) },
-      { name: 'S&P 500', color: RED, w: 1.5, v: c.spy.slice(i0) },
-      { name: '60 / 40', color: GREY, w: 1.5, v: c.aor.slice(i0) }
+      { name: '60 / 40', color: C_BM, w: 1.5, v: c.aor.slice(i0) },
+      { name: 'S&P 500', color: C_IX, w: 1.5, v: c.spy.slice(i0) }
     ];
+    if (hurdle && hurdle.length === dates.length) {
+      sets.push({ name: 'T-bills + 4.5% real', color: C_HURDLE, w: 1.3, dash: '5 4', v: hurdle });
+    }
     sets.forEach(function (s) { var b = s.v[0]; s.r = s.v.map(function (x) { return 100 * x / b; }); });
 
     var W = 960, H = 400, mL = 54, mR = 12, mT = 14, mB = 26;
@@ -1036,9 +1892,30 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       g += '<text x="' + xAt(t[0]).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="11" fill="#8b96a2" font-family="-apple-system,Segoe UI,Roboto,sans-serif">' + t[1] + '</text>';
     });
 
+    /* Shaded band over the stretch sampled monthly rather than daily.
+       Annotating the weak part of your own chart is a stronger move than
+       leaving a reader to discover it: inside this band the line cannot show
+       a drawdown that began and ended within a single month. */
+    ((S.resolution && S.resolution.segments) || []).forEach(function (sg) {
+      if (sg.cadence === 'daily') return;
+      var a = Math.max(mL, xAt(d(sg.from))), b = Math.min(W - mR, xAt(d(sg.to)));
+      if (!(b > a + 1)) return;
+      g += '<rect x="' + a.toFixed(1) + '" y="' + mT + '" width="' + (b - a).toFixed(1) +
+           '" height="' + ph + '" fill="#123a5e" opacity="0.045"><title>' +
+           esc(sg.cadence + ' observations only, ' + shortDate(sg.from) + ' to ' + shortDate(sg.to)) +
+           '</title></rect>';
+      if (b - a > 90) {
+        g += '<text x="' + ((a + b) / 2).toFixed(1) + '" y="' + (mT + 13) +
+             '" text-anchor="middle" font-size="10" fill="#8b96a2" font-family="' + SANS +
+             '">' + esc(sg.cadence + ' observations only') + '</text>';
+      }
+    });
+
     sets.forEach(function (s) {
       var pts = s.r.map(function (v, i) { return x(i).toFixed(1) + ',' + y(v).toFixed(1); }).join(' ');
-      g += '<polyline fill="none" stroke="' + s.color + '" stroke-width="' + s.w + '" stroke-linejoin="round" stroke-linecap="round" points="' + pts + '"/>';
+      g += '<polyline fill="none" stroke="' + s.color + '" stroke-width="' + s.w +
+           '" stroke-linejoin="round" stroke-linecap="round"' +
+           (s.dash ? ' stroke-dasharray="' + s.dash + '"' : '') + ' points="' + pts + '"/>';
     });
 
     g += '<line id="xh" x1="0" y1="' + mT + '" x2="0" y2="' + (mT + ph) + '" stroke="#123a5e" stroke-width="1" opacity="0"/>';
@@ -1115,12 +1992,14 @@ document.getElementById('yr').textContent = new Date().getFullYear();
           ? '<td class="n muted" title="No position data for this window">no data</td>'
           : '<td class="n ' + cls(v) + '">' + signPct(v) + '</td>';
       }
-      // vs-benchmark columns get a stronger green highlight (not just green
-      // text) when the portfolio outperformed - that's the point of this
-      // section, per James.
+      /* The vs-benchmark columns used to be filled solid green across both
+         columns wherever the portfolio outperformed. Two whole columns of
+         coloured cells reads as marketing; bold plus a small triangle reads
+         as data, and the figures are strong enough not to need the fill. */
       function out(v) {
         if (v === null) return '<td class="n muted" title="No position data for this window">no data</td>';
-        return '<td class="n ' + cls(v) + (v > 0 ? ' outperform' : '') + '">' + signPct(v) + '</td>';
+        return '<td class="n ' + cls(v) + (v > 0 ? ' outperform' : '') + '">' + signPct(v) +
+          (v > 0 ? '<span class="tri">▲</span>' : '') + '</td>';
       }
       var spyCell = '<td class="n ' + cls(e.spy) + '">' + signPct(e.spy) + (e.approx ? '*' : '') + '</td>';
       return '<tr><td class="m">' + esc(e.name) +
@@ -1168,6 +2047,45 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       ['Downside beta to the S&P 500', 'The same measure, computed only over the periods in which the index itself fell.',
         m.dbeta, m.b_dbeta, 1, 'num']
     ];
+
+    /* WORST ROLLING 12 MONTHS — added 14 August 2026, in the slot the VaR row
+       used to occupy. Directly observed: the worst any twelve-month holding
+       period in this record actually was. No distribution is assumed, nothing
+       is scaled, and it answers the question VaR was there to answer in a
+       sentence a reader can check against the chart.
+
+       The FIFTH-PERCENTILE twelve-month return is deliberately not shown. It
+       is computed in the engine and it is worse for the portfolio than for
+       either benchmark, because the book spends more time modestly underwater
+       even though its single worst episode is milder. Publishing worst-case
+       without it is James's decision of 14 August 2026, taken with the figure
+       in front of him — not an oversight. Do not add the column back without
+       asking him.
+
+       DOWN-CAPTURE is published; UP-CAPTURE is not, also James's decision the
+       same day: the S&P is a stress reference on this page, not a yardstick,
+       so the portfolio makes no claim about upside participation. Downside
+       beta sits two rows above it and points the other way — that is not a
+       contradiction, it is two different measurements, and the methodology
+       note below says so rather than leaving a reader to find it. */
+    var x = S.extras || {}, roll = x.rolling_12m, cap = x.capture;
+    if (roll) {
+      rows.push(['Worst twelve months on record',
+        'The largest fall over any twelve-month stretch the record contains. Directly observed, not estimated.',
+        roll.trs.worst, roll.aor.worst, roll.spy.worst, 'pct']);
+      rows.push(['Twelve-month stretches that ended higher',
+        'How often a twelve-month holding period finished above where it started.',
+        roll.trs.pct_positive, roll.aor.pct_positive, roll.spy.pct_positive, 'pct']);
+    }
+    if (cap) {
+      rows.push(['Downside capture vs the S&P 500',
+        'Of a typical fall in the index, how much of it the portfolio took. Lower is better; 100% would mean falling with it one for one.',
+        cap.down, null, 1, 'pct']);
+      rows.push(['Correlation to the S&P 500',
+        'How closely the two move together, from −1.00 to 1.00. Being close to zero is the objective, not an accident.',
+        cap.corr, null, 1, 'num']);
+    }
+
     el('riskTable').querySelector('tbody').innerHTML = rows.map(function (r) {
       function v(x) {
         if (x === null || x === undefined) return '<td class="n">—</td>';
@@ -1180,11 +2098,88 @@ document.getElementById('yr').textContent = new Date().getFullYear();
         '<span class="gloss">' + esc(r[1]) + '</span></td>' +
         v(r[2]) + v(r[3]) + v(r[4]) + '</tr>';
     }).join('');
-
   }
 
-  /* --- closed positions -------------------------------------------------- */
-  function trades(S) {
+  /* --- 9. the methodology behind the risk table ---------------------------- */
+  function riskMethod(S) {
+    var m = S.risk, x = S.extras || {}, roll = x.rolling_12m, cap = x.capture;
+    var segs = (S.resolution && S.resolution.segments) || [];
+    var p = [];
+
+    p.push('<p><b>The window.</b> Every figure in the table is measured over the whole ' +
+      'record, ' + longDate(S.curve.dates[0]) + ' to ' + longDate(S.series_through) + ' — ' +
+      (m.yrs ? fx(m.yrs) : '—') + ' years — against the two reference series at the ' +
+      'portfolio’s own observation dates. Benchmarks are never resampled independently, so ' +
+      'every comparison is on matched pairs of dates.</p>');
+
+    p.push('<p><b>How often it is sampled.</b> The record is not sampled at a uniform ' +
+      'interval: ' + segs.map(function (s) {
+        return s.cadence + ' from ' + shortDate(s.from) + ' to ' + shortDate(s.to);
+      }).join(', ') + '. Volatility and drawdown measured across a monthly stretch are ' +
+      'necessarily smaller than the same figures measured daily, because the moves inside ' +
+      'each month are never observed. Annualisation uses the record’s own empirical ' +
+      'sampling frequency rather than an assumed 252 trading days, which would overstate ' +
+      'annualised volatility over the coarse stretch.</p>');
+
+    p.push('<p><b>Which benchmark does what.</b> The 60/40 column is iShares AOR on a ' +
+      'total-return basis and is the relative bar. The S&amp;P 500 column is SPY, also ' +
+      'total return, and is a stress reference — it defines the decline windows and is the ' +
+      'reference for beta, correlation and capture. It is not a performance yardstick. Beta ' +
+      'and downside beta are measured <i>against</i> the S&amp;P by definition, so the ' +
+      'figures in their 60/40 column are that benchmark’s own beta, not a like-for-like ' +
+      'comparison.</p>');
+
+    if (cap) {
+      p.push('<p><b>Downside capture, and why it disagrees with downside beta.</b> Capture ' +
+        'here is the ratio of the two series’ ' + esc(cap.method) + ' — the conventional ' +
+        'construction. It reads ' + pct(cap.down) + '. Downside beta, two rows above, reads ' +
+        (m.dbeta === undefined ? '—' : fx(m.dbeta)) + ', slightly <i>higher</i> than ' +
+        'the portfolio’s overall beta of ' + (m.beta === undefined ? '—' : fx(m.beta)) +
+        '. Those point in different directions and both are correct. Capture is dominated by ' +
+        'the large, sustained declines — 2022 and 2026 — when the index fell and the ' +
+        'portfolio rose. Beta is a regression across every observation, so it is dominated ' +
+        'by the far more numerous small daily moves, where the book does move with the ' +
+        'market. A strategy can track the market’s small wobbles and still be absent for its ' +
+        'large falls; that is what these two numbers are jointly saying. Up-capture is ' +
+        'computed but not published, because the index is not the bar on this page and ' +
+        'publishing a figure for upside participation would invite it to be read as one.</p>');
+    }
+
+    if (roll) {
+      p.push('<p><b>Rolling twelve months.</b> Every trailing twelve-month return the record ' +
+        'can support, anchored at both ends on real observations: ' + roll.trs.windows +
+        ' windows. The worst ran ' + longDate(roll.trs.worst_from) + ' to ' +
+        longDate(roll.trs.worst_to) + '. These windows overlap heavily — about eight years of ' +
+        'history is roughly eight independent annual observations no matter how many ' +
+        'endpoints it yields — and the benchmark figures are flattered by an exceptional bull ' +
+        'run over the same span. Read them as description, not as a forecast distribution.</p>');
+    }
+
+    p.push('<p><b>What is deliberately absent.</b> Value at risk is not published. It was ' +
+      'previously shown as a single-period loss that had never been converted to a one-year ' +
+      'horizon; the obvious repair — scaling by the square root of periods per year — ' +
+      'assumes independent, normally distributed returns, which a strategy built to go to ' +
+      'cash in a dislocation violates by construction. Maximum drawdown, the worst rolling ' +
+      'twelve months and the decline-episode table answer the same question without that ' +
+      'assumption. The Sharpe ratio is not published either: Sortino is shown instead, ' +
+      'because penalising upside volatility misdescribes a book that is deliberately ' +
+      'lumpy on the way up.</p>');
+
+    p.push('<p><b>The risk-free rate</b> used in the Sortino ratio is the mean 3-month ' +
+      'Treasury-bill yield over the window, ' + pct(m.rf, 2) + ' a year — the same series ' +
+      'that pays and charges interest on the portfolio’s own cash balance.</p>');
+
+    el('riskMethod').innerHTML = p.join('');
+  }
+
+  /* --- 8. closed positions -------------------------------------------------
+     The distribution leads and the top-ten lists follow. A summary of all 184
+     round trips is evidence about a process; a table of the ten best is a
+     selection, and a reader is right to discount it. The concentration
+     figures are here for the same reason — the book is far more concentrated
+     than a fifteen-line positions table makes it look, and saying so
+     unprompted costs nothing and is checkable against that table. */
+  function trades(S, P, nav) {
     var list = S.trades;
     function tbl(rows) {
       return rows.map(function (t) {
@@ -1196,7 +2191,70 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     }
     el('bestT').querySelector('tbody').innerHTML = tbl(list.slice(0, 10));
     el('worstT').querySelector('tbody').innerHTML = tbl(list.slice(-10).reverse());
-    el('tradeCount').textContent = list.length + ' closed positions';
+
+    var wins = list.filter(function (t) { return t.total_pct > 0; });
+    var loss = list.filter(function (t) { return t.total_pct <= 0; });
+    function mean(a, f) { return a.length ? a.reduce(function (s, t) { return s + f(t); }, 0) / a.length : null; }
+    function sum(a, f) { return a.reduce(function (s, t) { return s + f(t); }, 0); }
+    function median(a, f) {
+      if (!a.length) return null;
+      var v = a.map(f).sort(function (p, q) { return p - q; });
+      var i = Math.floor(v.length / 2);
+      return v.length % 2 ? v[i] : (v[i - 1] + v[i]) / 2;
+    }
+    var pct_ = function (v) { return v.total_pct; }, mo = function (v) { return v.months; };
+    var winTot = sum(wins, function (t) { return t.total_pnl; });
+    var lossTot = sum(loss, function (t) { return t.total_pnl; });
+
+    el('tradeIntro').innerHTML =
+      'Every closed round trip in the record, not a selection from it. Positions costing ' +
+      'under $1,000 are excluded as odd-lot and settlement noise. Returns are total ' +
+      'return — price and any dividends received while the position was held.';
+
+    el('tradeStats').innerHTML = [
+      ['Closed positions', String(list.length), '', 'complete record'],
+      ['Finished in profit', wins.length + ' of ' + list.length,
+        wins.length > loss.length ? 'up' : '', pct(wins.length / list.length, 0) + ' hit rate'],
+      ['Average winner', signPct(mean(wins, pct_)), 'up',
+        'total ' + signMoney(winTot)],
+      ['Average loser', signPct(mean(loss, pct_)), 'down',
+        'total ' + signMoney(lossTot)]
+    ].map(statCard).join('');
+
+    el('tradeStats2').innerHTML = [
+      ['Median holding period', fx(median(list, mo) || 0, 1) + ' months', '',
+        'longest ' + fx(Math.max.apply(null, list.map(mo)), 0) + ' months'],
+      ['Won / lost, in dollars', signMoney(winTot + lossTot), cls(winTot + lossTot),
+        'winners ' + signMoney(winTot) + ', losers ' + signMoney(lossTot)],
+      ['Best and worst single trade', signPct(list[0].total_pct) + ' / ' +
+        signPct(list[list.length - 1].total_pct), '',
+        list[0].ticker + ' and ' + list[list.length - 1].ticker],
+      ['Average of every closed trade', signPct(mean(list, pct_)),
+        cls(mean(list, pct_)), 'equally weighted, ' + list.length + ' positions']
+    ].map(statCard).join('');
+
+    /* Concentration. Never published before, and it is material: this is not a
+       diversified book and the page should not let a reader assume it is. */
+    var byMV = P.slice().sort(function (a, b) { return b.market_value - a.market_value; });
+    var top5 = byMV.slice(0, 5).reduce(function (a, p) { return a + p.market_value; }, 0) / nav;
+    var largest = byMV[0];
+    var bySector = {};
+    P.forEach(function (p) { bySector[p.sector] = (bySector[p.sector] || 0) + p.market_value; });
+    var energy = Object.keys(bySector).filter(function (k) { return /energy|commodity|oil/i.test(k); })
+      .reduce(function (a, k) { return a + bySector[k]; }, 0) / nav;
+    el('concentration').innerHTML =
+      '<b>This is a concentrated book and the positions table above understates how ' +
+      'concentrated.</b> The five largest holdings are ' + pct(top5) + ' of net asset value; ' +
+      'the largest single position, ' + esc(largest.ticker) + ', is ' + pct(largest.weight) +
+      ' on its own; and the energy complex — oil, gas and energy equities taken together — is ' +
+      pct(energy) + '. Concentration of that order is a deliberate feature of the strategy ' +
+      'rather than an accident, but it means the record above is the record of a small number ' +
+      'of large decisions, and it should be read that way.';
+  }
+
+  function statCard(r) {
+    return '<div><span class="k">' + esc(r[0]) + '</span><span class="v ' + r[2] + '">' +
+      esc(r[1]) + '</span><span class="s">' + esc(r[3]) + '</span></div>';
   }
 
   /* --- provenance --------------------------------------------------------- */
