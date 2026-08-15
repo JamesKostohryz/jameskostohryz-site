@@ -144,11 +144,20 @@
   .sc .q{font-family:var(--serif);font-size:17px;color:var(--navy);line-height:1.3;display:block;margin-bottom:14px}
   .sc .verdict{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;border-radius:20px;padding:4px 13px;align-self:flex-start;margin-bottom:13px}
   .sc.pass .verdict{background:#e3f3ea;color:#0b5c3e} .sc.failv .verdict{background:#fdece9;color:#8f2d1c}
-  .sc .fig{font-family:var(--serif);font-size:27px;font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1.05;display:block}
-  .sc .vs{display:block;font-size:13px;color:var(--muted);margin-top:8px;line-height:1.55;font-variant-numeric:tabular-nums}
-  .sc .vs b{color:var(--navy-deep);font-weight:700}
-  .sc .gap{display:block;margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
-  .sc .gap b{font-variant-numeric:tabular-nums}
+  /* The portfolio's own figure is green when the test passes — it is the
+     answer, and it should read as one. The benchmark it is measured against
+     was set in 13px body text and was effectively invisible next to it; it is
+     now the same size as the figure it is being compared with, in muted ink,
+     so the comparison can actually be made at a glance. */
+  .sc .fig{font-family:var(--serif);font-size:30px;font-weight:600;color:var(--navy);font-variant-numeric:tabular-nums;line-height:1.05;display:block}
+  .sc.pass .fig{color:var(--up)} .sc.failv .fig{color:var(--down)}
+  .sc .figlab{display:block;font-size:11px;color:var(--faint);margin-top:3px;letter-spacing:.02em}
+  .sc .vsrow{display:flex;align-items:baseline;gap:10px;margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
+  .sc .vsnum{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.05;white-space:nowrap}
+  .sc .vslab{font-size:12px;color:var(--faint);line-height:1.45}
+  .sc .vslab b{display:block;color:var(--muted);font-weight:600;font-size:12.5px}
+  .sc .gap{display:block;margin-top:12px;padding-top:11px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+  .sc .gap b{font-variant-numeric:tabular-nums;color:var(--navy-deep)}
 
   /* ---------- charts drawn as inline SVG ---------------------------------- */
   .minichart{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px 12px;margin-top:6px}
@@ -165,9 +174,11 @@
   .sm .nm{font-size:12.5px;font-weight:700;color:var(--navy);display:block;line-height:1.3}
   .sm .dt{font-size:11px;color:var(--faint);display:block;margin:2px 0 8px}
   .sm svg{display:block;width:100%;height:auto}
-  .sm .fig{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-top:7px;font-variant-numeric:tabular-nums}
+  .sm .fig{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 8px;font-size:11.5px;margin-top:7px;font-variant-numeric:tabular-nums}
   .sm .fig span b{font-weight:700}
-  .sm .idx{color:var(--muted)} .sm .pf{color:var(--navy);font-weight:700}
+  .sm .idx{color:var(--faint)} .sm .idx b{color:var(--muted)}
+  .sm .pf{color:var(--navy);font-weight:700;flex-basis:100%;border-top:1px solid var(--line);padding-top:5px}
+  .sm .pf.beat{color:var(--up)}
 
   /* ---------- data-table toolbar (transactions) --------------------------- */
   .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0 4px}
@@ -550,7 +561,7 @@
       against all three.</p>
     <div class="bmk">
       <div>
-        <span class="role">Primary benchmark</span>
+        <span class="role">Relative benchmark</span>
         <span class="what">60 / 40 balanced portfolio</span>
         <span class="why">iShares AOR, total return. This is the relative bar. Beating it is
           the portfolio's relative-return objective.</span>
@@ -595,36 +606,6 @@
       </table>
     </div>
 
-    <!-- ==================== 2. CALENDAR-YEAR RETURNS ====================
-         Added 14 Aug 2026. Trailing-period returns hide the shape of a record;
-         year by year shows it. 2022 is the single strongest piece of evidence
-         here — and 2021, 2024 and 2025 are the weakest. All eight years are
-         drawn at the same visual weight, in the same colours, with no
-         emphasis on the good ones. -->
-    <h3 style="margin-top:2em">Year by year</h3>
-    <p class="sect-note" style="margin:0 0 8px">Every calendar year since inception, on
-      the same basis. The lagging years are shown exactly as prominently as the leading
-      ones.</p>
-    <div class="minichart">
-      <svg class="chart2" id="cyChart" viewBox="0 0 960 330" role="img" aria-label="Calendar-year total returns, portfolio against the 60/40 benchmark and the S&amp;P 500"></svg>
-      <div class="legend">
-        <span><i style="background:#123a5e"></i>Portfolio</span>
-        <span><i style="background:#8b96a2"></i>60 / 40 (benchmark)</span>
-        <span><i style="background:#b5893f"></i>S&amp;P 500 (reference)</span>
-      </div>
-    </div>
-    <div class="table-wrap">
-      <table class="dtable" id="cyTable" style="min-width:520px">
-        <thead><tr>
-          <th>Year</th><th class="n">Portfolio</th>
-          <th class="n">60 / 40<br><span style="font-weight:400;text-transform:none;letter-spacing:0">benchmark</span></th>
-          <th class="n">S&amp;P 500<br><span style="font-weight:400;text-transform:none;letter-spacing:0">reference</span></th>
-          <th class="n">vs 60 / 40</th>
-        </tr></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-    <p class="sect-note" id="cyNote"></p>
   </div>
 </section>
 
@@ -639,51 +620,33 @@
           <button class="tabbtn" id="logBtn" type="button">Log scale</button>
         </div>
       </div>
-      <svg class="chart" id="curve" viewBox="0 0 960 400" preserveAspectRatio="none" role="img" aria-label="Portfolio value against the S&amp;P 500, a 60/40 benchmark and the absolute-return hurdle"></svg>
+      <svg class="chart" id="curve" viewBox="0 0 960 400" preserveAspectRatio="none" role="img" aria-label="Portfolio value against the 60/40 relative benchmark and the absolute-return hurdle"></svg>
       <!-- The S&P was drawn in #c0392b — the same red this page uses for
            losses — and on the default view it sits ABOVE the portfolio line,
            so the eye read the strongest series as the alarming one. It is now
            a muted amber, and red is reserved for negative numbers. -->
       <div class="legend">
         <span><i style="background:#123a5e"></i>Portfolio</span>
-        <span><i style="background:#8b96a2"></i>60 / 40 (AOR, total return) — benchmark</span>
-        <span><i style="background:#b5893f"></i>S&amp;P 500 (SPY, total return) — reference</span>
-        <span><i style="background:#5c7d6a"></i>T-bills + 4.5% real — absolute bar</span>
+        <span><i style="background:#8b96a2"></i>60 / 40 (AOR, total return) — relative benchmark</span>
+        <span><i style="background:#5c7d6a"></i>T-bills + 4.5% real — absolute benchmark</span>
       </div>
       <p class="readout" id="curveRead"></p>
       <p class="sect-note" id="curveNote"></p>
     </div>
 
-    <!-- ==================== 5. UNDERWATER CHART ====================
-         Added 14 Aug 2026. Drawdown is the headline objective of this strategy
-         and it was represented on the page by a single table cell. This draws
-         it on the SAME time axis as the curve above, so the two read together.
-         Computed on the page from the published curve — a running-peak scan,
-         no methodology choice, nothing to keep in sync. -->
-    <div class="minichart" style="margin-top:16px">
-      <h3>Underwater</h3>
-      <p class="chart-sub">How far below its own previous high the portfolio was, on every
-        day of the record. The flat line at zero is a new high; the depth of each trough is
-        what a holder would actually have lived through. The S&amp;P is drawn behind it for
-        scale.</p>
-      <svg class="chart2" id="ddChart" viewBox="0 0 960 260" role="img" aria-label="Drawdown from previous peak, portfolio against the S&amp;P 500"></svg>
-      <div class="legend">
-        <span><i style="background:#123a5e"></i>Portfolio</span>
-        <span><i style="background:#b5893f"></i>S&amp;P 500 (reference)</span>
-      </div>
-      <p class="readout" id="ddRead"></p>
-    </div>
-
     <h2>Performance during major market declines</h2>
-    <p class="sect-note" style="margin:0 0 4px">Downside protection is the headline objective,
-      and this is the test of it. The windows are defined by the S&amp;P 500's own declines —
-      the one job the index does on this page.</p>
+    <p class="sect-note" style="margin:0 0 4px">Avoiding losses in bear markets and
+      corrections is the headline objective, and this is the test of it. The windows are
+      defined by the S&amp;P 500's own declines — the one job the index does on this page.
+      Each panel shows all three series rebased to the peak: the index, the 60/40 benchmark
+      and the portfolio.</p>
 
     <!-- ==================== 7. EPISODES AS SMALL MULTIPLES ====================
-         One panel per decline, identical axes, index in grey, portfolio in
-         navy. A reader sees the shape of every episode at once instead of
-         parsing eight rows of signed percentages. The table stays underneath
-         for the exact figures. -->
+         One panel per decline, identical axes: the S&P in grey, the 60/40
+         benchmark in a lighter slate, the portfolio in navy. A reader sees
+         the shape of every episode at once instead of parsing eight rows of
+         signed percentages. The table stays underneath for the exact
+         figures. -->
     <div class="smalls" id="epSmalls"></div>
     <div class="table-wrap">
       <table class="dtable" id="epTable" style="min-width:640px">
@@ -723,6 +686,7 @@
         <tbody></tbody>
       </table>
     </div>
+    <div class="notice info" id="captureNote"></div>
 
     <!-- ==================== 9. PROGRESSIVE DISCLOSURE ====================
          Every statistic above carries a one-line plain-English gloss. The
@@ -1018,9 +982,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     scorecard(S);
     book(D, M, S);
     periods(S);
-    calendarYears(S);
     curve(S);
-    underwater(S);
     episodes(S);
     episodeSmalls(S);
     rollingCorr(S);
@@ -1078,19 +1040,32 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   function scorecard(S) {
     var x = S.extras || {};
     if (!x.scorecard) { el('scorecard').innerHTML = ''; return; }
+    /* The third test is about loss avoidance across every market decline in
+       the record, not about the single deepest drawdown. Its two figures are
+       averages across those episodes, so they are labelled differently from
+       the two cumulative-return tests above them. */
     el('scorecard').innerHTML = x.scorecard.map(function (t) {
-      var isDD = t.test === 'Downside protection';
+      var isEp = !!t.episodes;
       return '<div class="sc ' + (t.pass ? 'pass' : 'failv') + '">' +
         '<span class="t">' + esc(t.role) + '</span>' +
         '<span class="q">' + esc(t.question) + '</span>' +
         '<span class="verdict">' + (t.pass ? 'Passed' : 'Not met') + '</span>' +
         '<span class="fig">' + signPct(t.value) + '</span>' +
-        '<span class="vs">' + (isDD ? 'deepest fall, against <b>' : 'against <b>') +
-          signPct(t.bar) + '</b><br>' + esc(t.benchmark) + '</span>' +
-        '<span class="gap">' + (isDD ? 'Shallower by <b>' : 'Ahead by <b>') +
-          Math.abs(t.gap * 100).toFixed(1) + ' points</b></span>' +
+        '<span class="figlab">' + (isEp
+          ? 'the portfolio, averaged across ' + t.episodes + ' market declines'
+          : 'the portfolio, total return since inception') + '</span>' +
+        '<span class="vsrow"><span class="vsnum">' + signPct(t.bar) + '</span>' +
+          '<span class="vslab"><b>' + esc(t.benchmark) + '</b>' +
+          (isEp ? 'the same ' + t.episodes + ' declines' : 'over the same period') +
+          '</span></span>' +
+        '<span class="gap">' + (isEp
+          ? 'Ahead by <b>' + fx(Math.abs(t.gap * 100), 1) + ' points</b> on average, and ' +
+            esc(t.detail)
+          : 'Ahead by <b>' + fx(Math.abs(t.gap * 100), 1) + ' points</b>') + '</span>' +
       '</div>';
     }).join('');
+
+    var ep = x.episode_summary || {};
     el('scoreNote').innerHTML =
       'Measured from ' + longDate(S.curve.dates[0]) + ' to <b>' + longDate(S.series_through) +
       '</b>. The absolute bar compounds the realised 3-month Treasury-bill yield day by day ' +
@@ -1099,115 +1074,12 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       ' is the T-bill itself. Stating the bar in nominal terms is the same test as stating ' +
       'it in real terms — the portfolio and the bar are both deflated by the same inflation, ' +
       'so it cancels, and no separate price index is involved. ' +
+      'The third test covers every decline of roughly 10% or more in the S&amp;P 500 since ' +
+      'the record begins — ' + (ep.episodes || '—') + ' of them, ' + (ep.bear_count || 0) +
+      ' of which were bear markets. Each is measured peak to trough on the index’s own ' +
+      'dates, and they are listed individually further down this page. The worst any of ' +
+      'them was for the portfolio was ' + signPct(ep.worst_trs) + '. ' +
       'Passing all three does not make the next eight years look like the last eight.';
-  }
-
-  /* --- 2. calendar-year returns ------------------------------------------- */
-  function calendarYears(S) {
-    var rows = ((S.extras || {}).calendar_years) || [];
-    if (!rows.length) return;
-
-    el('cyTable').querySelector('tbody').innerHTML = rows.map(function (r) {
-      var vs = r.trs - r.aor;
-      return '<tr><td class="m">' + r.year + (r.partial ? ' <span class="era">part year</span>' : '') + '</td>' +
-        '<td class="n ' + cls(r.trs) + '">' + signPct(r.trs) + '</td>' +
-        '<td class="n ' + cls(r.aor) + '">' + signPct(r.aor) + '</td>' +
-        '<td class="n ' + cls(r.spy) + '">' + signPct(r.spy) + '</td>' +
-        '<td class="n ' + cls(vs) + (vs > 0 ? ' outperform' : '') + '">' + signPct(vs) +
-          (vs > 0 ? '<span class="tri">▲</span>' : '') + '</td></tr>';
-    }).join('');
-
-    /* Grouped bars, one group per year, three bars per group, all years drawn
-       identically. No year is highlighted, shaded or annotated — 2022 carries
-       itself and the weak years are not softened. */
-    var W = 960, H = 330, mL = 46, mR = 10, mT = 14, mB = 40;
-    var pw = W - mL - mR, ph = H - mT - mB;
-    var series = [{ k: 'trs', c: C_PF }, { k: 'aor', c: C_BM }, { k: 'spy', c: C_IX }];
-    var all = [];
-    rows.forEach(function (r) { series.forEach(function (s) { all.push(r[s.k]); }); });
-    var lo = Math.min.apply(null, all.concat([0])), hi = Math.max.apply(null, all.concat([0]));
-    var pad = (hi - lo) * 0.08 || 0.02;
-    lo -= pad; hi += pad;
-    var y = function (v) { return mT + ph - ph * (v - lo) / (hi - lo); };
-
-    var g = '';
-    var step = 0.05;
-    if (hi - lo > 0.6) step = 0.10;
-    for (var t = Math.ceil(lo / step) * step; t <= hi + 1e-9; t += step) {
-      var v = Math.round(t * 1000) / 1000;
-      g += hline(mL, W - mR, y(v).toFixed(1), v === 0 ? '#b9c2cb' : '#eef1f4', v === 0 ? 1.4 : 1);
-      g += svgText(mL - 7, y(v) + 4, fx(v * 100, 0) + '%', { anchor: 'end' });
-    }
-    var gw = pw / rows.length, bw = Math.min(20, (gw - 14) / 3);
-    rows.forEach(function (r, i) {
-      var cx = mL + gw * i + gw / 2;
-      series.forEach(function (s, k) {
-        var v = r[s.k], y0 = y(0), y1 = y(v);
-        var bx = cx - (bw * 3 + 6) / 2 + k * (bw + 3);
-        g += '<rect x="' + bx.toFixed(1) + '" y="' + Math.min(y0, y1).toFixed(1) +
-             '" width="' + bw.toFixed(1) + '" height="' + Math.max(1.5, Math.abs(y1 - y0)).toFixed(1) +
-             '" fill="' + s.c + '" rx="1.5"><title>' + r.year + ' ' +
-             ({ trs: 'Portfolio', aor: '60/40', spy: 'S&P 500' })[s.k] + ' ' + signPct(v) + '</title></rect>';
-      });
-      g += svgText(cx, H - 20, String(r.year), { anchor: 'middle', size: 12, fill: '#64717f' });
-      g += svgText(cx, H - 6, signPct(r.trs, 0), { anchor: 'middle', size: 10.5, fill: C_PF, weight: 700 });
-    });
-    el('cyChart').innerHTML = g;
-
-    var wins = rows.filter(function (r) { return r.trs > r.aor; }).length;
-    var last = rows[rows.length - 1];
-    el('cyNote').innerHTML =
-      'The portfolio beat the 60/40 benchmark in ' + wins + ' of ' + rows.length +
-      ' calendar years, and beat the S&amp;P 500 in ' +
-      rows.filter(function (r) { return r.trs > r.spy; }).length + '. ' +
-      'It lagged both in ' + rows.filter(function (r) { return r.trs < r.aor && r.trs < r.spy; })
-        .map(function (r) { return r.year; }).join(', ') + '. ' +
-      'Each year runs from the last observation on or before 31 December of the prior year ' +
-      'to the last on or before 31 December of the year itself; on the stretch of the record ' +
-      'sampled monthly a boundary can fall on a month-end a few days either side of the ' +
-      'calendar date. ' + last.year + ' is a part year, through ' + longDate(last.exact_end) + '.';
-  }
-
-  /* --- 5. underwater ------------------------------------------------------ */
-  function underwater(S) {
-    var c = S.curve;
-    var dtrs = drawdownOf(c.trs), dspy = drawdownOf(c.spy);
-    var W = 960, H = 260, mL = 46, mR = 10, mT = 12, mB = 26;
-    var pw = W - mL - mR, ph = H - mT - mB;
-    var lo = Math.min(Math.min.apply(null, dtrs), Math.min.apply(null, dspy));
-    lo = Math.min(lo * 1.06, -0.05);
-    var t0 = d(c.dates[0]), t1 = d(c.dates[c.dates.length - 1]), tspan = (t1 - t0) || 1;
-    var xAt = function (ms) { return mL + pw * (ms - t0) / tspan; };
-    var y = function (v) { return mT + ph * (v / lo); };
-
-    var g = '', step = lo < -0.30 ? 0.10 : 0.05;
-    for (var v = 0; v >= lo; v -= step) {
-      var vv = Math.round(v * 1000) / 1000;
-      g += hline(mL, W - mR, y(vv).toFixed(1), vv === 0 ? '#b9c2cb' : '#eef1f4', vv === 0 ? 1.4 : 1);
-      g += svgText(mL - 7, y(vv) + 4, fx(vv * 100, 0) + '%', { anchor: 'end' });
-    }
-    function line(vals, color, w) {
-      return poly(vals.map(function (v, i) {
-        return xAt(d(c.dates[i])).toFixed(1) + ',' + y(v).toFixed(1);
-      }).join(' '), color, w);
-    }
-    g += line(dspy, C_IX, 1.3);
-    g += line(dtrs, C_PF, 2);
-    var y0 = new Date(t0).getUTCFullYear(), y1 = new Date(t1).getUTCFullYear();
-    for (var yy = y0 + 1; yy <= y1; yy++) {
-      g += svgText(xAt(Date.UTC(yy, 0, 1)), H - 7, String(yy), { anchor: 'middle' });
-    }
-    el('ddChart').innerHTML = g;
-
-    var worst = Math.min.apply(null, dtrs);
-    var worstD = c.dates[dtrs.indexOf(worst)];
-    var sWorst = Math.min.apply(null, dspy);
-    el('ddRead').innerHTML =
-      'Deepest fall: <b>' + signPct(worst) + '</b> on ' + longDate(worstD) +
-      ' &nbsp;·&nbsp; S&amp;P 500 over the same record: <b>' + signPct(sWorst) + '</b>' +
-      ' &nbsp;·&nbsp; at a new high on <b>' +
-      pct(dtrs.filter(function (v) { return v > -0.0001; }).length / dtrs.length, 0) +
-      '</b> of observations.';
   }
 
   /* --- 4. rolling twelve-month correlation -------------------------------- */
@@ -1341,29 +1213,38 @@ document.getElementById('yr').textContent = new Date().getFullYear();
     el('epSmalls').innerHTML = rows.map(function (e) {
       var w = windowOf(e.peak, e.trough);
       if (!w) return '';
-      var pf = c.trs.slice(w[0], w[1] + 1), ix = c.spy.slice(w[0], w[1] + 1);
       var dts = c.dates.slice(w[0], w[1] + 1);
-      var pfR = pf.map(function (v) { return v / pf[0] - 1; });
-      var ixR = ix.map(function (v) { return v / ix[0] - 1; });
+      function reb(arr) {
+        var v = arr.slice(w[0], w[1] + 1);
+        return v.map(function (q) { return q / v[0] - 1; });
+      }
+      var pfR = reb(c.trs), ixR = reb(c.spy), bmR = reb(c.aor);
       var W = 240, H = 92, mT = 6, mB = 6, mL = 2, mR = 2;
       var ph = H - mT - mB, pw = W - mL - mR;
-      var all = pfR.concat(ixR);
+      var all = pfR.concat(ixR).concat(bmR);
       var lo = Math.min.apply(null, all), hi = Math.max.apply(null, all);
       var pad = (hi - lo) * 0.12 || 0.02; lo -= pad; hi += pad;
       var t0 = d(dts[0]), t1 = d(dts[dts.length - 1]), tspan = (t1 - t0) || 1;
       var xAt = function (i) { return mL + pw * (d(dts[i]) - t0) / tspan; };
       var y = function (v) { return mT + ph - ph * (v - lo) / (hi - lo); };
-      function ln(arr, color, wd) {
-        return poly(arr.map(function (v, i) { return xAt(i).toFixed(1) + ',' + y(v).toFixed(1); }).join(' '), color, wd);
+      function ln(arr, color, wd, dash) {
+        return poly(arr.map(function (v, i) { return xAt(i).toFixed(1) + ',' + y(v).toFixed(1); }).join(' '), color, wd, dash);
       }
-      var g = hline(mL, W - mR, y(0).toFixed(1), '#e3e7eb', 1) + ln(ixR, '#b9c2cb', 1.4) + ln(pfR, C_PF, 2);
+      /* Three lines: the S&P in grey (it defines the window), the 60/40
+         benchmark in a lighter slate, the portfolio in navy on top. */
+      var g = hline(mL, W - mR, y(0).toFixed(1), '#e3e7eb', 1) +
+              ln(ixR, '#9aa5b1', 1.4) + ln(bmR, '#c6ccd3', 1.4, '3 3') + ln(pfR, C_PF, 2.2);
+      var beat = e.vs_spy !== null && e.vs_spy > 0;
       return '<div class="sm">' +
         '<span class="nm">' + esc(e.name) + '</span>' +
         '<span class="dt">' + shortDate(e.peak) + ' – ' + shortDate(e.trough) + '</span>' +
         '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' +
-          esc(e.name) + ': portfolio ' + signPct(e.trs) + ', S&P 500 ' + signPct(e.spy) + '">' + g + '</svg>' +
+          esc(e.name) + ': TRS ' + signPct(e.trs) + ', 60/40 ' + signPct(e.aor) +
+          ', S&P 500 ' + signPct(e.spy) + '">' + g + '</svg>' +
         '<div class="fig"><span class="idx">S&amp;P <b>' + signPct(e.spy) + '</b></span>' +
-        '<span class="pf">' + signPct(e.trs) + '</span></div>' +
+        '<span class="idx">60/40 <b>' + signPct(e.aor) + '</b></span>' +
+        '<span class="pf' + (beat ? ' beat' : '') + '">TRS <b>' + signPct(e.trs) + '</b></span>' +
+        '</div>' +
       '</div>';
     }).join('');
   }
@@ -1764,7 +1645,10 @@ document.getElementById('yr').textContent = new Date().getFullYear();
      this period" rather than "what does the tail of the full history look
      like". Log scale is offered because over 7+ years and several hundred per
      cent, equal vertical distances on a linear axis are not equal returns. */
-  var CUR = { range: 'all', log: false, S: null };
+  /* Log by default, 15 Aug 2026 (James). Over 7+ years and several hundred per
+   cent, equal vertical distances on a linear axis are not equal returns, and
+   a linear axis makes the early years look flat when they were not. */
+var CUR = { range: 'all', log: true, S: null };
 
   function curve(S) {
     CUR.S = S;
@@ -1787,6 +1671,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       [].forEach.call(this.querySelectorAll('button'), function (x) { x.classList.toggle('on', x === b); });
       drawCurve();
     });
+    el('logBtn').classList.toggle('on', CUR.log);
     el('logBtn').addEventListener('click', function () {
       CUR.log = !CUR.log;
       this.classList.toggle('on', CUR.log);
@@ -1817,10 +1702,16 @@ document.getElementById('yr').textContent = new Date().getFullYear();
        absolute-return hurdle is drawn as a thin dashed line so the absolute
        test in the scorecard is visible rather than asserted. */
     var hurdle = (S.extras && S.extras.hurdle) ? S.extras.hurdle.slice(i0) : null;
+    /* The S&P was removed from this chart on 15 Aug 2026 at James's
+       instruction. It is a stress reference, not a bar, and drawing it here
+       invited the chart to be read as a race against the index — which is
+       precisely the reading the benchmark-roles block above rejects. It
+       remains everywhere it does real work: the decline episodes, the
+       rolling-correlation chart and the risk table. This chart now shows the
+       portfolio against the two benchmarks it is actually managed against. */
     var sets = [
       { name: 'Portfolio', color: NAVY, w: 2.4, v: c.trs.slice(i0) },
-      { name: '60 / 40', color: C_BM, w: 1.5, v: c.aor.slice(i0) },
-      { name: 'S&P 500', color: C_IX, w: 1.5, v: c.spy.slice(i0) }
+      { name: '60 / 40', color: C_BM, w: 1.5, v: c.aor.slice(i0) }
     ];
     if (hurdle && hurdle.length === dates.length) {
       sets.push({ name: 'T-bills + 4.5% real', color: C_HURDLE, w: 1.3, dash: '5 4', v: hurdle });
@@ -2073,13 +1964,14 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       rows.push(['Worst twelve months on record',
         'The largest fall over any twelve-month stretch the record contains. Directly observed, not estimated.',
         roll.trs.worst, roll.aor.worst, roll.spy.worst, 'pct']);
-      rows.push(['Twelve-month stretches that ended higher',
-        'How often a twelve-month holding period finished above where it started.',
-        roll.trs.pct_positive, roll.aor.pct_positive, roll.spy.pct_positive, 'pct']);
     }
     if (cap) {
+      /* Down-capture is now the COMPOUNDED result across every month the
+         index fell, not an average of period ratios — James, 15 Aug 2026.
+         The two cumulative figures behind it are shown underneath the table,
+         because they are the substance and the ratio alone hides them. */
       rows.push(['Downside capture vs the S&P 500',
-        'Of a typical fall in the index, how much of it the portfolio took. Lower is better; 100% would mean falling with it one for one.',
+        'Compound both through every month the index fell: of the market’s cumulative loss, this is the share the portfolio took. Lower is better; 100% would mean falling with it one for one.',
         cap.down, null, 1, 'pct']);
       rows.push(['Correlation to the S&P 500',
         'How closely the two move together, from −1.00 to 1.00. Being close to zero is the objective, not an accident.',
@@ -2098,6 +1990,18 @@ document.getElementById('yr').textContent = new Date().getFullYear();
         '<span class="gloss">' + esc(r[1]) + '</span></td>' +
         v(r[2]) + v(r[3]) + v(r[4]) + '</tr>';
     }).join('');
+
+    if (cap) {
+      el('captureNote').innerHTML =
+        '<b>What the downside-capture figure is made of.</b> Of the ' + cap.total_periods +
+        ' months in the record, the S&amp;P 500 fell in <b>' + cap.down_periods + '</b>. ' +
+        'Compounded across only those months, the index lost <b>' + signPct(cap.down_index) +
+        '</b> and the portfolio lost <b>' + signPct(cap.down_portfolio) + '</b> — ' +
+        pct(cap.down) + ' of the market’s loss, a difference of ' +
+        fx(Math.abs((cap.down_portfolio - cap.down_index) * 100), 1) + ' points. ' +
+        'Those are cumulative figures across the down months only; they are not the ' +
+        'portfolio’s or the index’s return over the period, which was positive for both.';
+    }
   }
 
   /* --- 9. the methodology behind the risk table ---------------------------- */
@@ -2130,9 +2034,18 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       'comparison.</p>');
 
     if (cap) {
-      p.push('<p><b>Downside capture, and why it disagrees with downside beta.</b> Capture ' +
-        'here is the ratio of the two series’ ' + esc(cap.method) + ' — the conventional ' +
-        'construction. It reads ' + pct(cap.down) + '. Downside beta, two rows above, reads ' +
+      p.push('<p><b>Why downside capture is measured monthly.</b> ' +
+        esc(cap.method.charAt(0).toUpperCase() + cap.method.slice(1)) + ': ' +
+        cap.down_periods + ' months out of ' + cap.total_periods + '. Compounding only ' +
+        'works if there are few enough periods that the product does not collapse. There ' +
+        'are 668 individual days in this record on which the index fell; compounding 668 ' +
+        'negative daily returns drives the index to about −99.99% and the portfolio to ' +
+        'about −99.87%, and the ratio of two numbers both pinned against total loss ' +
+        'measures their distance from −100%, not their relationship to each other. Monthly ' +
+        'is the standard basis for capture statistics for exactly this reason.</p>');
+
+      p.push('<p><b>Downside capture, and why it disagrees with downside beta.</b> ' +
+        'Capture reads ' + pct(cap.down) + '. Downside beta, two rows above, reads ' +
         (m.dbeta === undefined ? '—' : fx(m.dbeta)) + ', slightly <i>higher</i> than ' +
         'the portfolio’s overall beta of ' + (m.beta === undefined ? '—' : fx(m.beta)) +
         '. Those point in different directions and both are correct. Capture is dominated by ' +
@@ -2142,7 +2055,8 @@ document.getElementById('yr').textContent = new Date().getFullYear();
         'market. A strategy can track the market’s small wobbles and still be absent for its ' +
         'large falls; that is what these two numbers are jointly saying. Up-capture is ' +
         'computed but not published, because the index is not the bar on this page and ' +
-        'publishing a figure for upside participation would invite it to be read as one.</p>');
+        'publishing a figure for upside participation would invite it to be read as one. ' +
+        'It is available on request.</p>');
     }
 
     if (roll) {
