@@ -1140,14 +1140,23 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       '</b>. Whole-period correlation <b>' + (full === undefined ? '—' : fx(full, 3)) +
       '</b>, which explains <b>' + pct((S.extras.capture || {}).r2, 1) +
       '</b> of the portfolio’s variation.';
+    /* The mixed-cadence caveat that used to live here was real until the
+       31 May 2022 – 30 Nov 2023 stretch was reconstructed daily. It is written
+       off the published cadence rather than hard-coded, so it states what the
+       feed actually contains and cannot outlive the thing it describes. */
+    var rcSegs = (S.resolution && S.resolution.segments) || [];
+    var rcMixed = rcSegs.some(function (s) { return s.cadence !== rcSegs[0].cadence; });
     el('corrNote').textContent =
       'Correlation of the two series’ returns over a trailing ' + rc.months +
       ' months, computed on matched observation dates, at every point with at least ' +
-      rc.min_obs + ' paired observations. One limitation worth knowing: the record is not ' +
-      'sampled at a uniform interval, so a window falling inside the monthly stretch ' +
-      '(31 May 2022 to 30 November 2023) is a correlation of monthly returns while the ' +
-      'windows either side are correlations of daily returns. Those are not the same ' +
-      'statistic, and the coarse windows rest on about a dozen observations each.';
+      rc.min_obs + ' paired observations.' + (rcMixed
+        ? ' One limitation worth knowing: the record is not sampled at a uniform' +
+          ' interval, so windows falling inside a coarser stretch are correlations' +
+          ' of coarser returns than the windows either side. Those are not the same' +
+          ' statistic.'
+        : ' Every window is a correlation of daily returns; the record is sampled' +
+          ' daily end to end, so no window rests on a coarser interval than any' +
+          ' other.');
   }
 
   /* --- 6. cash and exposure through time ---------------------------------- */
@@ -2079,14 +2088,25 @@ var CUR = { range: 'all', log: true, S: null };
       'portfolio’s own observation dates. Benchmarks are never resampled independently, so ' +
       'every comparison is on matched pairs of dates.</p>');
 
-    p.push('<p><b>How often it is sampled.</b> The record is not sampled at a uniform ' +
-      'interval: ' + segs.map(function (s) {
-        return s.cadence + ' from ' + shortDate(s.from) + ' to ' + shortDate(s.to);
-      }).join(', ') + '. Volatility and drawdown measured across a monthly stretch are ' +
-      'necessarily smaller than the same figures measured daily, because the moves inside ' +
-      'each month are never observed. Annualisation uses the record’s own empirical ' +
-      'sampling frequency rather than an assumed 252 trading days, which would overstate ' +
-      'annualised volatility over the coarse stretch.</p>');
+    var mdMixed = segs.some(function (s) { return s.cadence !== segs[0].cadence; });
+    p.push('<p><b>How often it is sampled.</b> ' + (mdMixed
+      ? 'The record is not sampled at a uniform interval: ' + segs.map(function (s) {
+          return s.cadence + ' from ' + shortDate(s.from) + ' to ' + shortDate(s.to);
+        }).join(', ') + '. Volatility and drawdown measured across a coarser stretch are ' +
+        'necessarily smaller than the same figures measured daily, because the moves ' +
+        'inside each interval are never observed.'
+      : 'The record is sampled ' + segs.map(function (s) {
+          return s.cadence + ' from ' + shortDate(s.from) + ' to ' + shortDate(s.to);
+        }).join(', ') + ', end to end. Until 15 August 2026 the stretch from 31 May 2022 ' +
+        'to 30 November 2023 was carried as 18 month-end statement values and nothing ' +
+        'in between, so no drawdown that began and ended inside a single month could be ' +
+        'seen there. It has since been reconstructed day by day from the holdings, the ' +
+        'trade ledger and daily closing prices, with every month-end still pinned to the ' +
+        'custodian statement it was already reported at. Cumulative return is therefore ' +
+        'unchanged; what changed is that the path between the month-ends is now observed, ' +
+        'and the maximum drawdown below is deeper as a result.') +
+      ' Annualisation uses the record’s own empirical sampling frequency rather than an ' +
+      'assumed 252 trading days.</p>');
 
     p.push('<p><b>Which benchmark does what.</b> The 60/40 column is iShares AOR on a ' +
       'total-return basis and is the relative bar. The S&amp;P 500 column is SPY, also ' +
