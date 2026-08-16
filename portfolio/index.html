@@ -344,27 +344,25 @@
     <span>Transactions in the model book: <b id="asofTx">—</b></span>
     <span>Cost basis: <b id="asofBasis">—</b></span>
   </div>
-  <div id="freshness"></div>
 </div>
 
 <div class="wrap">
-  <!-- Re-cut 14 Aug 2026. The three tabs used to be Portfolio (2 sections) /
-       Transactions (1 table) / Analysis (6 sections) — the tab holding
-       everything that matters was the junk drawer, and it was not the default.
-       Now: PERFORMANCE first and by default (does the strategy work),
-       PORTFOLIO (what it holds right now), ACTIVITY (what it did and what it
-       closed). Income moved to Portfolio, closed positions moved to Activity.
-       The tab is in the URL hash so a section can be linked to directly. -->
+  <!-- Re-ordered 16 Aug 2026, per James: PORTFOLIO first and by default (what
+       it holds right now), ACTIVITY second (what it did and what it closed),
+       PERFORMANCE third (does the strategy work). Was Performance / Portfolio
+       / Activity from the 14 Aug re-cut -- he wants the concrete holdings read
+       before the track record. The tab is in the URL hash so a section can be
+       linked to directly. -->
   <div class="chart-ctl" id="pfTabs" style="margin:26px 0 4px">
     <div class="grp" role="tablist" aria-label="Model portfolio sections">
-      <button class="tabbtn on" id="tabbtn-performance" role="tab" aria-selected="true" aria-controls="tab-performance" data-tab="performance" type="button">Performance</button>
-      <button class="tabbtn" id="tabbtn-portfolio" role="tab" aria-selected="false" tabindex="-1" aria-controls="tab-portfolio" data-tab="portfolio" type="button">Portfolio</button>
+      <button class="tabbtn on" id="tabbtn-portfolio" role="tab" aria-selected="true" aria-controls="tab-portfolio" data-tab="portfolio" type="button">Portfolio</button>
       <button class="tabbtn" id="tabbtn-activity" role="tab" aria-selected="false" tabindex="-1" aria-controls="tab-activity" data-tab="activity" type="button">Activity</button>
+      <button class="tabbtn" id="tabbtn-performance" role="tab" aria-selected="false" tabindex="-1" aria-controls="tab-performance" data-tab="performance" type="button">Performance</button>
     </div>
   </div>
 </div>
 
-<div id="tab-portfolio" role="tabpanel" aria-labelledby="tabbtn-portfolio" tabindex="0" hidden>
+<div id="tab-portfolio" role="tabpanel" aria-labelledby="tabbtn-portfolio" tabindex="0">
 
 <!-- ============================ 1. CURRENT BOOK ============================ -->
 <section class="section" style="padding-top:14px">
@@ -455,6 +453,18 @@
   </div>
 </section>
 
+<!-- Price-vintage footnote -- demoted 16 Aug 2026 from a pair of full-width
+     colored notices at the very top of the page (first thing anyone read) to
+     this single quiet line here. The base facts are already stated plainly
+     elsewhere: the top strip shows "Prices as of ... (mixed)" and the
+     provenance footer at the bottom of the page states the ledger and series
+     as-of dates in prose. This only adds the one thing those do not carry --
+     which ticker, when a mark is not from the same session as the rest -- and
+     only appears when that is actually true. It stays empty otherwise. -->
+<section class="wrap" style="padding:0 0 8px">
+  <p class="sect-note" id="priceVintage"></p>
+</section>
+
 </div><!-- /tab-portfolio -->
 
 <div id="tab-activity" role="tabpanel" aria-labelledby="tabbtn-activity" tabindex="0" hidden>
@@ -530,7 +540,7 @@
 </section>
 </div><!-- /tab-activity -->
 
-<div id="tab-performance" role="tabpanel" aria-labelledby="tabbtn-performance" tabindex="0">
+<div id="tab-performance" role="tabpanel" aria-labelledby="tabbtn-performance" tabindex="0" hidden>
 
 <!-- ==================== 1. THE THREE-TEST SCORECARD ====================
      Added 14 Aug 2026, and deliberately placed above everything else. The
@@ -698,7 +708,6 @@
         <tbody></tbody>
       </table>
     </div>
-    <div class="notice info" id="captureNote"></div>
 
     <!-- ==================== 9. PROGRESSIVE DISCLOSURE ====================
          Every statistic above carries a one-line plain-English gloss. The
@@ -917,7 +926,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
           SVG user units against a viewBox and none measures a pixel width —
           an SVG inside a hidden container reports a width of zero, which is
           what silently breaks charts built the other way. */
-  var TABS = ['performance', 'portfolio', 'activity'];
+  var TABS = ['portfolio', 'activity', 'performance'];
 
   function showTab(tab, push) {
     if (TABS.indexOf(tab) < 0) tab = TABS[0];
@@ -985,7 +994,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
        multi-year record with no date on it anywhere. Both halves are restored.
        If you remove an element these write into, remove the call as well. */
     asof(M, P, S);
-    freshness(P, M, S);
+    freshness(P);
     kpis(D, nav, cash, cashW, P, mv, basis);
     positions(P, S, mv, basis, cash, cashW, nav);
     allocation(P, S, cash, nav);
@@ -1510,40 +1519,35 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   }
 
   /* --- price-vintage disclosure ------------------------------------------
-     The single most important honesty control on the page. Marks are end-of-day
-     and there is no intraday refresh, so the age is always stated. If rows ever
-     carry different stamps again, each vintage is listed separately rather than
-     averaged away into one date. */
-  function freshness(P, M, S) {
+     Demoted 16 Aug 2026, per James: this used to be two full-width colored
+     notices at the very top of the page -- the first thing anyone read, ahead
+     of the holdings themselves. The underlying facts are not going anywhere:
+     the top strip already shows "Prices as of ... (mixed)" and the
+     provenance footer at the bottom of the page (prov()) already states the
+     ledger and series as-of dates in plain prose. This function keeps the one
+     piece neither of those carries -- WHICH ticker is on a different mark --
+     as a single quiet line inside the Portfolio tab, and only when it is
+     actually true. A stale-beyond-normal single date (>4 days) still gets a
+     short note; that is a real staleness signal worth keeping, distinct from
+     one thin foreign line routinely landing a session behind the rest. */
+  function freshness(P) {
+    var target = el('priceVintage');
+    if (!target) return;
     var stamps = {};
     P.forEach(function (p) { (stamps[p.price_asof] = stamps[p.price_asof] || []).push(p.ticker); });
     var keys = Object.keys(stamps).sort();
-    var out = '';
 
     if (keys.length > 1) {
-      out += '<div class="notice warn"><b>Holdings are marked at more than one date.</b>' +
-             'These prices do not all come from the same session, so net asset value and the ' +
-             'allocation weights derived from it are provisional. Marks by date: ' +
-             keys.map(function (k) {
-               return '<code>' + longDate(k) + '</code> — ' + stamps[k].join(', ');
-             }).join(' · ') + '.</div>';
+      target.textContent = 'Not every position is marked at the same session: ' +
+        keys.map(function (k) { return stamps[k].join(', ') + ' at ' + longDate(k); }).join('; ') +
+        '. This does not move net asset value materially.';
     } else {
       var age = daysAgo(keys[0]);
-      out += '<div class="notice ' + (age > 4 ? 'warn' : 'info') + '"><b>Prices are end-of-day, not live.</b>' +
-             'Every holding is marked at its ' + longDate(keys[0]) + ' close' +
-             (age > 0 ? ', ' + age + ' day' + (age === 1 ? '' : 's') + ' ago' : '') +
-             '. Net asset value and the weights below move with the market between refreshes; ' +
-             'they are a snapshot of that close, not of this moment.</div>';
+      target.textContent = age > 4
+        ? ('Prices were last refreshed ' + longDate(keys[0]) + ', ' + age + ' days ago -- ' +
+           'older than this page normally runs.')
+        : '';
     }
-
-    if (M.ledger_through !== S.series_through) {
-      out += '<div class="notice info"><b>Two different dates are in play on this page.</b>' +
-             'The current book — everything above and the allocation and income sections — runs through ' +
-             '<code>' + longDate(M.ledger_through) + '</code>. The period returns, the long-term series, ' +
-             'the decline episodes and the risk statistics come from a separate series that ends ' +
-             '<code>' + longDate(S.series_through) + '</code>. They are not the same window and are not combined.</div>';
-    }
-    el('freshness').innerHTML = out;
   }
 
   /* --- positions --------------------------------------------------------- */
@@ -2029,12 +2033,15 @@ var CUR = { range: 'all', log: true, S: null };
        because a reader who checks will find the portfolio's own number got
        slightly WORSE, and that is better volunteered than discovered.
 
-       DOWN-CAPTURE is published; UP-CAPTURE is not, also James's decision the
-       same day: the S&P is a stress reference on this page, not a yardstick,
-       so the portfolio makes no claim about upside participation. Downside
-       beta sits two rows above it and points the other way — that is not a
-       contradiction, it is two different measurements, and the methodology
-       note below says so rather than leaving a reader to find it. */
+       DOWNSIDE CAPTURE was published from 15 August to 16 August 2026 and was
+       then pulled, per James: it was not an understandable statistic to a
+       reader who has not already absorbed how compounding-across-down-months
+       works. The compounded-major-declines figure above the risk table stays
+       — it is the same instinct (how does the book do when the market
+       actually breaks) told through seven dated, checkable episodes instead
+       of a single ratio. UP-CAPTURE remains unpublished, unchanged: the S&P
+       is a stress reference on this page, not a yardstick, so the portfolio
+       makes no claim about upside participation. */
     var x = S.extras || {}, roll = x.rolling_12m, cap = x.capture;
     if (roll) {
       rows.push(['Worst twelve months on record',
@@ -2050,13 +2057,6 @@ var CUR = { range: 'all', log: true, S: null };
       }
     }
     if (cap) {
-      /* Down-capture is now the COMPOUNDED result across every month the
-         index fell, not an average of period ratios — James, 15 Aug 2026.
-         The two cumulative figures behind it are shown underneath the table,
-         because they are the substance and the ratio alone hides them. */
-      rows.push(['Downside capture vs the S&P 500',
-        'Compound both through every month the index fell: of the market’s cumulative loss, this is the share the portfolio took. Lower is better; 100% would mean falling with it one for one.',
-        cap.down, null, 1, 'pct']);
       rows.push(['Correlation to the S&P 500',
         'How closely the two move together, from −1.00 to 1.00. Being close to zero is the objective, not an accident.',
         cap.corr, null, 1, 'num']);
@@ -2074,18 +2074,6 @@ var CUR = { range: 'all', log: true, S: null };
         '<span class="gloss">' + esc(r[1]) + '</span></td>' +
         v(r[2]) + v(r[3]) + v(r[4]) + '</tr>';
     }).join('');
-
-    if (cap) {
-      el('captureNote').innerHTML =
-        '<b>What the downside-capture figure is made of.</b> Of the ' + cap.total_periods +
-        ' months in the record, the S&amp;P 500 fell in <b>' + cap.down_periods + '</b>. ' +
-        'Compounded across only those months, the index lost <b>' + signPct(cap.down_index) +
-        '</b> and the portfolio lost <b>' + signPct(cap.down_portfolio) + '</b> — ' +
-        pct(cap.down) + ' of the market’s loss, a difference of ' +
-        fx(Math.abs((cap.down_portfolio - cap.down_index) * 100), 1) + ' points. ' +
-        'Those are cumulative figures across the down months only; they are not the ' +
-        'portfolio’s or the index’s return over the period, which was positive for both.';
-    }
   }
 
   /* --- 9. the methodology behind the risk table ---------------------------- */
@@ -2123,46 +2111,38 @@ var CUR = { range: 'all', log: true, S: null };
     p.push('<p><b>Which benchmark does what.</b> The 60/40 column is iShares AOR on a ' +
       'total-return basis and is the relative bar. The S&amp;P 500 column is SPY, also ' +
       'total return, and is a stress reference — it defines the decline windows and is the ' +
-      'reference for beta, correlation and capture. It is not a performance yardstick. Beta ' +
+      'reference for beta and correlation. It is not a performance yardstick. Beta ' +
       'and downside beta are measured <i>against</i> the S&amp;P by definition, so the ' +
       'figures in their 60/40 column are that benchmark’s own beta, not a like-for-like ' +
       'comparison.</p>');
 
-    if (cap) {
-      p.push('<p><b>Three different measures of the same instinct, and they are not ' +
-        'interchangeable.</b> The scorecard compounds the ' + (x.episode_summary || {}).episodes +
-        ' major decline windows only, and answers "when the market actually broke, what ' +
-        'happened?" The downside-capture row in the table above compounds every calendar ' +
-        'month the index fell, big or small, and answers "across all the market\'s ' +
-        'weakness, how much did the book take?" Downside beta regresses across every ' +
-        'observation in the record. They give ' + signPct((x.episode_summary || {}).compounded_trs) +
-        ' against ' + signPct((x.episode_summary || {}).compounded_spy) + ', ' + pct(cap.down) +
-        ', and ' + (m.dbeta === undefined ? '—' : fx(m.dbeta)) + ' respectively. None ' +
-        'contradicts the others; they are answers to three different questions.</p>');
-
-      p.push('<p><b>Why downside capture is measured monthly.</b> ' +
-        esc(cap.method.charAt(0).toUpperCase() + cap.method.slice(1)) + ': ' +
-        cap.down_periods + ' months out of ' + cap.total_periods + '. Compounding only ' +
-        'works if there are few enough periods that the product does not collapse. There ' +
-        'are 668 individual days in this record on which the index fell; compounding 668 ' +
-        'negative daily returns drives the index to about −99.99% and the portfolio to ' +
-        'about −99.87%, and the ratio of two numbers both pinned against total loss ' +
-        'measures their distance from −100%, not their relationship to each other. Monthly ' +
-        'is the standard basis for capture statistics for exactly this reason.</p>');
-
-      p.push('<p><b>Downside capture, and why it disagrees with downside beta.</b> ' +
-        'Capture reads ' + pct(cap.down) + '. Downside beta, two rows above, reads ' +
-        (m.dbeta === undefined ? '—' : fx(m.dbeta)) + ', slightly <i>higher</i> than ' +
-        'the portfolio’s overall beta of ' + (m.beta === undefined ? '—' : fx(m.beta)) +
-        '. Those point in different directions and both are correct. Capture is dominated by ' +
-        'the large, sustained declines — 2022 and 2026 — when the index fell and the ' +
-        'portfolio rose. Beta is a regression across every observation, so it is dominated ' +
-        'by the far more numerous small daily moves, where the book does move with the ' +
-        'market. A strategy can track the market’s small wobbles and still be absent for its ' +
-        'large falls; that is what these two numbers are jointly saying. Up-capture is ' +
-        'computed but not published, because the index is not the bar on this page and ' +
-        'publishing a figure for upside participation would invite it to be read as one. ' +
-        'It is available on request.</p>');
+    if (cap && x.episode_summary) {
+      /* Downside capture (the compounded-monthly ratio) was published 15-16
+         Aug 2026 and then pulled, per James: not an understandable figure to
+         a reader who has not already internalised what "compounded across
+         every down month" means. The compounded-major-declines figure above
+         the risk table answers the same underlying question -- how the book
+         behaves when the market actually breaks -- through seven dated,
+         checkable episodes instead of a single ratio, and stays published.
+         This paragraph now only reconciles THAT figure with downside beta,
+         which is a genuinely different measurement and can look like it
+         disagrees if a reader does not know why. */
+      p.push('<p><b>Two different measures of the same instinct.</b> The figure above the ' +
+        'risk table compounds the ' + x.episode_summary.episodes + ' major decline windows ' +
+        'only, and answers "when the market actually broke, what happened?" — ' +
+        signPct(x.episode_summary.compounded_trs) + ' against the index’s ' +
+        signPct(x.episode_summary.compounded_spy) + '. Downside beta, in the table above, ' +
+        'regresses across every observation in the record and reads ' +
+        (m.dbeta === undefined ? '—' : fx(m.dbeta)) + ', slightly <i>higher</i> than the ' +
+        'portfolio’s overall beta of ' + (m.beta === undefined ? '—' : fx(m.beta)) + '. Both ' +
+        'are correct and they are not in tension: the decline-window figure is dominated by ' +
+        'a handful of large, sustained breaks — 2022 and 2026 — when the index fell and the ' +
+        'portfolio rose, while beta is dominated by the far more numerous small daily moves, ' +
+        'where the book does move with the market. A strategy can track the market’s small ' +
+        'wobbles and still be absent for its large falls. Up-capture is computed but not ' +
+        'published, because the index is not the bar on this page and publishing a figure ' +
+        'for upside participation would invite it to be read as one. It is available on ' +
+        'request.</p>');
     }
 
     if (roll) {
