@@ -1267,13 +1267,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
       'Taking the two bear markets alone — the ' +
       'declines of 20% or more — the index compounds to ' + signPct(ep.bear_compounded_spy) +
       ', the 60/40 benchmark to ' + signPct(ep.bear_compounded_aor) + ' and the portfolio to ' +
-      signPct(ep.bear_compounded_trs) + '. ' +
-      '<b>Two things this does not say.</b> It does not say the portfolio made money over ' +
-      'the record by being short — it was positive in only ' +
-      ((S.episodes || []).filter(function (e) { return e.trs !== null && e.trs > 0; }).length) +
-      ' of the ' + ep.episodes + ' declines and merely lost less in the rest. And it does ' +
-      'not say anything about what the book does in a rising market, which is a different ' +
-      'question answered by the period returns and the long-term chart above.';
+      signPct(ep.bear_compounded_trs) + '.';
   }
 
   /* --- 7. decline episodes as small multiples ------------------------------ */
